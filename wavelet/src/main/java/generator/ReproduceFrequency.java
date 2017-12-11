@@ -13,8 +13,8 @@ import java.util.HashMap;
 //generate a map of frequencies,<indexOfElement,frequency>
 public class ReproduceFrequency {
     public static void main(String[] args) throws Exception {
-        //example file:(8,3)
-       // (3,2.5)
+        //example file:(8,3) firstline, (numberOfDomain, numberOfCoefficient)
+       // (3,2.5)  (indexOfCoefficentTree, coefficientValue)
         //(1,6.75)
         //(4,5.0)
 
