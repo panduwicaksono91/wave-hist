@@ -7,7 +7,8 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.Collector;
-
+//a method that generate frequencies of words, only for future test.
+// the BaselineImpl already implemented the caculation.
 public class FrequencyGenerator {
     public static void main(String[] args) {
         DataSet a = generateFrequency("E://96-test//1.txt");

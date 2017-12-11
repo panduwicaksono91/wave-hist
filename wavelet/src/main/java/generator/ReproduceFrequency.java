@@ -1,20 +1,24 @@
 package main.java.generator;
 
+import java.io.File;
+
 
 
 import java.io.BufferedReader;
-import java.io.File;
+
 import java.io.FileReader;
 import java.util.HashMap;
 
-
+//rebuild the frequency with coefficients and number of domain.
+//generate a map of frequencies,<indexOfElement,frequency>
 public class ReproduceFrequency {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         //example file:(8,3)
        // (3,2.5)
         //(1,6.75)
         //(4,5.0)
-        reproduceFrequency("E://96-test//1.txt");
+
+        reproduceFrequency("rf.txt");
 
     }
 
@@ -77,11 +81,11 @@ public class ReproduceFrequency {
                     avgs.put(j*2,avgs.get(j)+coJ);
                 }
             }
-            System.out.println(avgs);
+     //       System.out.println(avgs);
             for(int i=1;i<=numberOfDomain;i++){
                 freqs.put(i,avgs.get(numberOfDomain+i));
             }
-            System.out.println(freqs);
+            System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
 
         } catch (Exception e) {
             e.printStackTrace();
