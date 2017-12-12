@@ -2,23 +2,10 @@ package main.java.calculation.exact1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
 
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.GroupReduceFunction;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.MapPartitionFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.tuple.Tuple;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.flink.util.Collector;
 
 public class BaselineImpl {
 	public static void buildWaveletWithoutFlink() {
@@ -49,7 +36,7 @@ public class BaselineImpl {
 		//file content: "7,8,1,8,1,8,7,8,3,2,7,7,3,4,7,2,3,4,8,7,4,4,2,6,8,8,8,4,4,8,4,8,3,5,6,8,7,3,4,3,8,8,2,2,3,1,3,7,3,3,7,7,5,8"
 		//this produce the histogram in domain u=8 as described in the paper (figure 1)
 		
-		String inputFile = "D:\\data\\bdapro\\wavelet\\toydataset_1.txt";
+		String inputFile = "src\\resource\\toydataset_1.txt";
 		
 		//domain U
 		int U = 8;
