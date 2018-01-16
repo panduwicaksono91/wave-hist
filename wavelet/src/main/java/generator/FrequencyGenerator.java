@@ -11,12 +11,14 @@ import org.apache.flink.util.Collector;
 // the BaselineImpl already implemented the caculation.
 public class FrequencyGenerator {
     public static void main(String[] args) {
-        DataSet a = generateFrequency("E://96-test//1.txt");
+        DataSet a = generateFrequency("wave-hist\\wavelet\\src\\resource\\toydataset_1.txt");
         try {
             a.print();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
     public static DataSet<Tuple2<String, Integer>> generateFrequency(String filepath) {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
@@ -37,8 +39,8 @@ public class FrequencyGenerator {
                     }
                 }
         ).groupBy(0)
-                .sum(1).sortPartition(0, Order.ASCENDING).setParallelism(1);;
-
+                .sum(1).sortPartition(0, Order.ASCENDING).setParallelism(1);
+        frequency.writeAsText("wave-hist\\wavelet\\src\\resource\\toydataset_1_freq.txt");
         return frequency;
     }
 }

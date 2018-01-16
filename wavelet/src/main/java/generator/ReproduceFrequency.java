@@ -18,11 +18,11 @@ public class ReproduceFrequency {
         //(1,6.75)
         //(4,5.0)
 
-        reproduceFrequency("rf.txt");
+        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\rf.txt");
 
     }
 
-    public static double RMSE(HashMap<Integer,Integer> trueValue, HashMap<Integer,Double> predictedValue){
+    public static double SSE(HashMap<Integer,Integer> trueValue, HashMap<Integer,Double> predictedValue){
         int n = trueValue.size();
         double a = 0.0;
         for (int i = 0; i < n; i++) {
