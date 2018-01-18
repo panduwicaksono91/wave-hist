@@ -1,5 +1,6 @@
 package main.java.generator;
 
+import java.io.BufferedWriter;
 import java.io.File;
 
 
@@ -28,7 +29,6 @@ public class ReproduceFrequency {
         for (int i = 0; i < n; i++) {
             a+=Math.pow(trueValue.get(i)-predictedValue.get(i),2);
         }
-
         return Math.sqrt(a/n);
     }
     public static HashMap<Integer,Double> reproduceFrequency(String fileName) {
@@ -86,7 +86,17 @@ public class ReproduceFrequency {
                 freqs.put(i,avgs.get(numberOfDomain+i));
             }
             System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
-
+            java.util.Iterator it = freqs.entrySet().iterator();
+            File tree=new File("wave-hist\\wavelet\\src\\resource\\reproducedtree.txt");
+            BufferedWriter bufferWriter = new java.io.BufferedWriter(new java.io.FileWriter(tree));
+            while(it.hasNext()) {
+                java.util.HashMap.Entry entry = (java.util.HashMap.Entry) it.next();
+                Integer key = (Integer) entry.getKey();
+                Double value = (Double) entry.getValue();  // 返回与此项对应的值
+                bufferWriter.write("("+key+","+value+")\n");
+            }
+            bufferWriter.flush();
+            bufferWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
