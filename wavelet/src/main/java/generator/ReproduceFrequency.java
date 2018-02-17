@@ -19,7 +19,7 @@ public class ReproduceFrequency {
         //(1,6.75)
         //(4,5.0)
 
-        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\rf.txt");
+        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\rf.txt",8);
 
     }
 
@@ -31,11 +31,10 @@ public class ReproduceFrequency {
         }
         return Math.sqrt(a/n);
     }
-    public static HashMap<Integer,Double> reproduceFrequency(String fileName) {
+    public static HashMap<Integer,Double> reproduceFrequency(String fileName,int numberOfDomain) {
         File file = new File(fileName);
         BufferedReader reader = null;
-        int numberOfDomain = 0;
-        int numberOfK = 0;
+ //       int numberOfDomain = 0;
         HashMap<Integer, Double> wavelet = new HashMap<Integer, Double>();
         HashMap<Integer,Double> avgs = new HashMap<Integer , Double>();
         HashMap<Integer,Double> freqs = new HashMap<Integer , Double>();
@@ -47,12 +46,12 @@ public class ReproduceFrequency {
             while ((tempString = reader.readLine()) != null) {
                 System.out.println("line " + line + ": " + tempString);
                 String[] substring = tempString.split("[\\(\\)\\s+,]");
-                if (line == 1) {
-                    numberOfDomain = Integer.valueOf(substring[1]);
-                    numberOfK = Integer.valueOf(substring[2]);
-                } else {
+//                if (line == 1) {
+//                    numberOfDomain = Integer.valueOf(substring[1]);
+//                    numberOfK = Integer.valueOf(substring[2]);
+//                } else {
                     wavelet.put(Integer.valueOf(substring[1]), Double.valueOf(substring[2]));
-                }
+//                }
                 line++;
             }
             reader.close();
