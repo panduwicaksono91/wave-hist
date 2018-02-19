@@ -18,19 +18,25 @@ public class ReproduceFrequency {
        // (3,2.5)  (indexOfCoefficentTree, coefficientValue)
         //(1,6.75)
         //(4,5.0)
+        //2^29 =
+        String inputFile = args[0];
+        reproduceFrequency(inputFile,8);
+        System.out.println(inputFile.substring(inputFile.lastIndexOf("\\")+1,inputFile.lastIndexOf(".")));
 
-        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\rf.txt",8);
+//        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",8);
+    //    reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",(int)Math.pow(2,29));
 
     }
 
-    public static double SSE(HashMap<Integer,Integer> trueValue, HashMap<Integer,Double> predictedValue){
-        int n = trueValue.size();
-        double a = 0.0;
-        for (int i = 0; i < n; i++) {
-            a+=Math.pow(trueValue.get(i)-predictedValue.get(i),2);
-        }
-        return Math.sqrt(a/n);
-    }
+//    public static double SSE(HashMap<Integer,Integer> trueValue, HashMap<Integer,Double> predictedValue){
+//        int n = trueValue.size();
+//        double a = 0.0;
+//        for (int i = 0; i < n; i++) {
+//            a+=Math.pow(trueValue.get(i)-predictedValue.get(i),2);
+//        }
+//        return Math.sqrt(a/n);
+//    }
+
     public static HashMap<Integer,Double> reproduceFrequency(String fileName,int numberOfDomain) {
         File file = new File(fileName);
         BufferedReader reader = null;
@@ -78,6 +84,7 @@ public class ReproduceFrequency {
 
                     avgs.put(j*2-1,avgs.get(j)-coJ);
                     avgs.put(j*2,avgs.get(j)+coJ);
+                    avgs.remove(j);
                 }
             }
      //       System.out.println(avgs);
@@ -86,7 +93,7 @@ public class ReproduceFrequency {
             }
             System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
             java.util.Iterator it = freqs.entrySet().iterator();
-            File tree=new File("wave-hist\\wavelet\\src\\resource\\reproducedtree.txt");
+            File tree=new File(fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("."))+"FreqTree.txt");
             BufferedWriter bufferWriter = new java.io.BufferedWriter(new java.io.FileWriter(tree));
             while(it.hasNext()) {
                 java.util.HashMap.Entry entry = (java.util.HashMap.Entry) it.next();

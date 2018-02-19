@@ -14,8 +14,12 @@ import org.apache.flink.util.Collector;
 public class CalculateSSE {
     public static void main(String[] args) throws Exception {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        DataSet<String> text = env.readTextFile("wave-hist\\wavelet\\src\\resource\\toydataset_1_freq.txt");
-        DataSet<String> text2 = env.readTextFile("wave-hist\\wavelet\\src\\resource\\test.txt");
+        String file1=args[0];
+        String file2=args[1];
+//        String file1="wave-hist\\wavelet\\src\\resource\\toydataset_1_freq.txt";
+//        String file2="wave-hist\\wavelet\\src\\resource\\test.txt";
+        DataSet<String> text = env.readTextFile(file1);
+        DataSet<String> text2 = env.readTextFile(file2);
 
         DataSet<Tuple2<String, Integer>> t1 = text.flatMap(
                 new FlatMapFunction<String, Tuple2<String, Integer>>() {
