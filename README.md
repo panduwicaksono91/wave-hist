@@ -9,9 +9,16 @@ Final presentation
 Your report
 Your sources, java doc, etc.
 
-<h1>Building Histograms on Large Datasets in Apache Flink<h1>
+# Building Histograms on Large Datasets in Apache Flink
+## Big Data Project - Issue 12
+####### Team Member:
+* Dieu Trantihong (XXX)
+* Pandu Wicaksono (panduwicaksono91)
+* Shibo Cheng (XXX)
+####### Team Adviser:
+* Alireza
 
-
+[link](test.txt)
 
 
 
