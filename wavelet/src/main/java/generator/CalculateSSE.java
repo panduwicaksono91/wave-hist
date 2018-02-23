@@ -9,6 +9,7 @@ import org.apache.flink.api.java.operators.MapOperator;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 public class CalculateSSE {
@@ -16,6 +17,7 @@ public class CalculateSSE {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         String file1=args[0];
         String file2=args[1];
+        String file3=args[2];
 //        String file1="wave-hist\\wavelet\\src\\resource\\toydataset_1_freq.txt";
 //        String file2="wave-hist\\wavelet\\src\\resource\\test.txt";
         DataSet<String> text = env.readTextFile(file1);
@@ -52,6 +54,8 @@ public class CalculateSSE {
                 }
         ).sum(0);
         sse.print();
+        sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+        env.execute();
 
 
     }

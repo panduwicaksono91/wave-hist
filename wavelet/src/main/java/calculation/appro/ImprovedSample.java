@@ -14,12 +14,12 @@ import java.util.PriorityQueue;
 import java.util.Random;
 
 public class ImprovedSample {
-    // filepath, k,ee;
+    // filepath, k,ee, outpath;
     public static void main(String[] args) throws Exception {
         //     String inputFile = "wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
         String inputFile = args[0];
-//        int U = (int) Math.pow(2, 29);
-        int U = (int) Math.pow(2, 3);
+              int U = (int) Math.pow(2, 29);
+     //   int U = (int) Math.pow(2, 3);
         //number of Levels of the wavelet tree
         int numLevels = (int) (Math.log(U) / Math.log(2));
         //      int k = 3;
@@ -27,10 +27,13 @@ public class ImprovedSample {
 
         //       double ee = 0.0001;
         double ee = Double.valueOf(args[2]);
+        String outputFile = String.valueOf(args[3]);
         System.out.println(ee);
         int n = 1350000000;
-        // final double pp = 1 / (ee * ee * n);
-        double pp = 0.5;
+        final double pp = 1 / (ee * ee * n);
+       int jumpstep=(int)Math.round(ee*ee*n);
+     //   int jumpstep = 2;
+        //   double pp = 0.5;
 
         System.out.println(pp);
         Random random = new Random();
@@ -44,13 +47,13 @@ public class ImprovedSample {
                                  String[] tokens = value.split("\\W+|,");
                                  int tj = tokens.length;
                                  int[] freqs = new int[U];
-                                 for (String token : tokens) {
-                                     if (token.length() > 0 && random.nextDouble() <= pp) {
-                                         int key = Integer.valueOf(token) - 1;
-                                         freqs[key] += 1;
+                                 for (int i = 0; i < tokens.length; i += jumpstep) {
+                                     String token = tokens[i];
+                                     int key = Integer.valueOf(token) - 1;
+                                     freqs[key] += 1;
 
-                                         //out.collect(new Tuple2<Integer, Integer>(Integer.valueOf(token), 1));
-                                     }
+                                     //out.collect(new Tuple2<Integer, Integer>(Integer.valueOf(token), 1));
+
                                  }
                                  for (int i = 0; i < U; i++) {
                                      if (freqs[i] >= ee * tj)
@@ -167,12 +170,19 @@ public class ImprovedSample {
 
             }
         });
-        try {
-            coefs.print();
-            String classname=Thread.currentThread().getStackTrace()[1].getClassName();
-            coefs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+        try
+
+        {
+ //           coefs.print();
+            String classname = Thread.currentThread().getStackTrace()[1].getClassName();
+//            coefs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+            coefs.writeAsText(outputFile, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+
             env.execute();
-        } catch (Exception e) {
+        } catch (
+                Exception e)
+
+        {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

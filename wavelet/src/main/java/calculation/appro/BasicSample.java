@@ -13,27 +13,29 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class BasicSample {
+    //input k ee output
     public static void main(String[] args) throws Exception {
         String inputFile = args[0];
-   //     String inputFile = "wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
+        //     String inputFile = "wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
 
 
-        int U = (int) Math.pow(2, 3);
-  //      int U = (int) Math.pow(2, 29);
+     //         int U = (int) Math.pow(2, 3);
+        int U = (int) Math.pow(2, 29);
         //number of Levels of the wavelet tree
         int numLevels = (int) (Math.log(U) / Math.log(2));
         //int k = 3;
         int k = Integer.valueOf(args[1]);
-        double pp = 0.5;
-        double ee = 0.0001;
+        //     double pp = 0.5;
+        //     double ee = 0.0001;
+        double ee = Double.valueOf(args[2]);
         int n = 1350000000;
         System.out.println(ee);
         System.out.println(n);
-        //	final double pp=1/(ee*ee*n);
-        //	int jumpstep=(int)Math.round(ee*ee*n);
+        final double pp = 1 / (ee * ee * n);
+      int jumpstep = (int) Math.round(ee * ee * n);
         System.out.println("jump: " + (int) Math.round(ee * ee * n));
-
-        int jumpstep = 2;
+        String outputpath = String.valueOf(args[3]);
+   //    int jumpstep = 2;
 //		Random random=new Random();
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         //	ReservoirSamplerWithoutReplacement sampler=new ReservoirSamplerWithoutReplacement<Integer>(10);
@@ -48,9 +50,8 @@ public class BasicSample {
                                  // emit the pairs
                                  for (int i = 0; i < tokens.length; i += jumpstep) {
                                      String token = tokens[i];
-                                     if (token.length() > 0) {
-                                         out.collect(new Tuple2<Integer, Integer>(Integer.valueOf(token), 1));
-                                     }
+
+                                     out.collect(new Tuple2<Integer, Integer>(Integer.valueOf(token), 1));
                                  }
 
 //								                for (String token : tokens) {
@@ -61,7 +62,7 @@ public class BasicSample {
                              }
                          }
                 );
-  //      sample.print();
+        //      sample.print();
 
         DataSet<IntDouble> freqs = sample.groupBy(0)
                 .reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>() {
@@ -155,9 +156,11 @@ public class BasicSample {
                     }
                 });
         try {
-            freqs.print();
-            String classname=Thread.currentThread().getStackTrace()[1].getClassName();
-            freqs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+    //        freqs.print();
+            String classname = Thread.currentThread().getStackTrace()[1].getClassName();
+//            freqs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+            freqs.writeAsText(outputpath, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+
             env.execute();
         } catch (Exception e) {
             // TODO Auto-generated catch block

@@ -15,30 +15,33 @@ import java.util.PriorityQueue;
 import java.util.Random;
 
 public class TweLevelSample {
-    //filepath k m ee
+    //filepath k m ee outpath
     public static void main(String[] args) throws Exception {
       //  String inputFile = "\\wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
         String inputFile = args[0];
-        //int U = (int) Math.pow(2, 29);
+        int U = (int) Math.pow(2, 29);
 
-        int U = (int) Math.pow(2, 3);
+    //    int U = (int) Math.pow(2, 3);
         //number of Levels of the wavelet tree
         int numLevels = (int) (Math.log(U) / Math.log(2));
     //    int k = 3;
       //  int m = 3;
         int k = Integer.valueOf(args[1]);
-        int m = Integer.valueOf(args[2]);
+        int mapper = Integer.valueOf(args[2]);
 
   //      double ee = 0.0001;
-        //double em = Math.sqrt(m) * ee;
-        final double em = 0.5;
-        double ee = Double.valueOf(args[2]);
-
+        //
+      // final double em = 0.5;
+        double ee = Double.valueOf(args[3]);
+        String outputFile=String.valueOf(args[4]);
+        double em = Math.sqrt(mapper) * ee;
         int n = 1350000000;
         System.out.println(ee);
         System.out.println(n);
-        // final double pp = 1 / (ee * ee * n);
-        double pp = 0.5;
+         final double pp = 1 / (ee * ee * n);
+        int jumpstep=(int)Math.round(ee*ee*n);
+  //      double pp = 0.5;
+   //     int jumpstep=2;
         System.out.println(pp);
         Random random = new Random();
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
@@ -50,13 +53,10 @@ public class TweLevelSample {
                                  // normalize and split the line
                                  String[] tokens = value.split("\\W+|,");
                                  int[] freqs = new int[U];
-                                 for (String token : tokens) {
-                                     if (token.length() > 0 && random.nextDouble() <= pp) {
-                                         int key = Integer.valueOf(token) - 1;
-                                         freqs[key] += 1;
-
-                                         //out.collect(new Tuple2<Integer, Integer>(Integer.valueOf(token), 1));
-                                     }
+                                 for (int i = 0; i < tokens.length; i += jumpstep) {
+                                     String token = tokens[i];
+                                     int key = Integer.valueOf(token) - 1;
+                                     freqs[key] += 1;
                                  }
                                  for (int i = 0; i < U; i++) {
                                      if (freqs[i] != 0) {
@@ -185,9 +185,10 @@ public class TweLevelSample {
             }
         });
         try {
-            coefs.print();
-            String classname=Thread.currentThread().getStackTrace()[1].getClassName();
-            coefs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+   //         coefs.print();
+        //    String classname=Thread.currentThread().getStackTrace()[1].getClassName();
+            //coefs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+            coefs.writeAsText(outputFile, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
             env.execute();
         } catch (Exception e) {
             // TODO Auto-generated catch block

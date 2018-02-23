@@ -13,6 +13,7 @@ import java.util.HashMap;
 //rebuild the frequency with coefficients and number of domain.
 //generate a map of frequencies,<indexOfElement,frequency>
 public class ReproduceFrequency {
+    //inputfile outputfile
     public static void main(String[] args) throws Exception {
         //example file:(8,3) firstline, (numberOfDomain, numberOfCoefficient)
        // (3,2.5)  (indexOfCoefficentTree, coefficientValue)
@@ -20,7 +21,8 @@ public class ReproduceFrequency {
         //(4,5.0)
         //2^29 =
         String inputFile = args[0];
-        reproduceFrequency(inputFile,8);
+        String outputFile= args[1];
+        reproduceFrequency(inputFile,outputFile,(int)Math.pow(2,29));
         System.out.println(inputFile.substring(inputFile.lastIndexOf("\\")+1,inputFile.lastIndexOf(".")));
 
 //        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",8);
@@ -37,7 +39,7 @@ public class ReproduceFrequency {
 //        return Math.sqrt(a/n);
 //    }
 
-    public static HashMap<Integer,Double> reproduceFrequency(String fileName,int numberOfDomain) {
+    public static HashMap<Integer,Double> reproduceFrequency(String fileName, String outputFile,int numberOfDomain) {
         File file = new File(fileName);
         BufferedReader reader = null;
  //       int numberOfDomain = 0;
@@ -61,6 +63,7 @@ public class ReproduceFrequency {
                 line++;
             }
             reader.close();
+            System.out.println("finish reading");
             level = (int) (Math.log(numberOfDomain) / Math.log(2));
 
             if (wavelet.containsKey(1)) {
@@ -73,7 +76,7 @@ public class ReproduceFrequency {
 
             double coJ=0;
             for (int i = 1; i <= level; i++) {
-
+                System.out.println("level:"+i);
                 for (int j = (int)Math.pow(2,i-1)+1; j <= (int)Math.pow(2,i); j++) {
 
                     if(wavelet.containsKey(j)){
@@ -91,9 +94,12 @@ public class ReproduceFrequency {
             for(int i=1;i<=numberOfDomain;i++){
                 freqs.put(i,avgs.get(numberOfDomain+i));
             }
-            System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
+        //    System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
             java.util.Iterator it = freqs.entrySet().iterator();
-            File tree=new File(fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("."))+"FreqTree.txt");
+  //          File tree=new File(fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("."))+"FreqTree.txt");
+
+            File tree=new File(outputFile);
+
             BufferedWriter bufferWriter = new java.io.BufferedWriter(new java.io.FileWriter(tree));
             while(it.hasNext()) {
                 java.util.HashMap.Entry entry = (java.util.HashMap.Entry) it.next();
