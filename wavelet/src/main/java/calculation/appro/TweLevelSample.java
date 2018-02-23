@@ -3,6 +3,7 @@ package main.java.calculation.appro;
 import main.java.calculation.exact1.IntDouble;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
+import org.apache.flink.api.common.functions.MapPartitionFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -17,77 +18,86 @@ import java.util.Random;
 public class TweLevelSample {
     //filepath k m ee outpath
     public static void main(String[] args) throws Exception {
-      //  String inputFile = "\\wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
+        //  String inputFile = "\\wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
         String inputFile = args[0];
         int U = (int) Math.pow(2, 29);
 
-    //    int U = (int) Math.pow(2, 3);
+//            int U = (int) Math.pow(2, 3);
         //number of Levels of the wavelet tree
         int numLevels = (int) (Math.log(U) / Math.log(2));
-    //    int k = 3;
-      //  int m = 3;
+        //    int k = 3;
+        //  int m = 3;
         int k = Integer.valueOf(args[1]);
         int mapper = Integer.valueOf(args[2]);
 
-  //      double ee = 0.0001;
+        //      double ee = 0.0001;
         //
-      // final double em = 0.5;
+
         double ee = Double.valueOf(args[3]);
-        String outputFile=String.valueOf(args[4]);
+        String outputFile = String.valueOf(args[4]);
         double em = Math.sqrt(mapper) * ee;
         int n = 1350000000;
         System.out.println(ee);
         System.out.println(n);
-         final double pp = 1 / (ee * ee * n);
-        int jumpstep=(int)Math.round(ee*ee*n);
-  //      double pp = 0.5;
-   //     int jumpstep=2;
+//         final double em = 0.5;
+        final double pp = 1 / (ee * ee * n);
+        int jumpstep = (int) Math.round(ee * ee * n);
+//              double pp = 0.5;
+//             int jumpstep=2;
         System.out.println(pp);
         Random random = new Random();
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         //	ReservoirSamplerWithoutReplacement sampler=new ReservoirSamplerWithoutReplacement<Integer>(10);
         DataSet<Tuple2<Integer, Integer>> sample = env.readTextFile(inputFile)
-                .flatMap(new FlatMapFunction<String, Tuple2<Integer, Integer>>() {
-                             @Override
-                             public void flatMap(String value, Collector<Tuple2<Integer, Integer>> out) {
-                                 // normalize and split the line
-                                 String[] tokens = value.split("\\W+|,");
-                                 int[] freqs = new int[U];
-                                 for (int i = 0; i < tokens.length; i += jumpstep) {
-                                     String token = tokens[i];
-                                     int key = Integer.valueOf(token) - 1;
-                                     freqs[key] += 1;
-                                 }
-                                 for (int i = 0; i < U; i++) {
-                                     if (freqs[i] != 0) {
-                                        if(freqs[i]>=1/em)
-                                            out.collect(new Tuple2<Integer, Integer>(i+1, freqs[i]));
-                                        else if(random.nextDouble() <= em * freqs[i])
-                                            out.collect(new Tuple2<Integer, Integer>(i+1, 0));
-                                     }
-                                 }
-
-
-                             }
-                         }
-                );
-  //      sample.print();
-//        DataSet<Tuple2<Integer, Integer>> s1freqs = sample.groupBy(0)
-//                .sum(1);
-//        s1freqs.print();
-//        DataSet<Tuple2<Integer, Integer>> s2freqs = s1freqs.flatMap
-//                (new FlatMapFunction<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>() {
-//                     @Override
-//                     public void flatMap(Tuple2<Integer, Integer> value, Collector<Tuple2<Integer, Integer>> out) throws Exception {
-//                         if (value.f1 >= 1 / em) {
-//                             out.collect(value);
-//                         } else {
-//                             if (random.nextDouble() <= em * value.f1)
-//                                 out.collect(Tuple2.of(value.f0, 0));
+//                .flatMap(new FlatMapFunction<String, Tuple2<Integer, Integer>>() {
+//                             @Override
+//                             public void flatMap(String value, Collector<Tuple2<Integer, Integer>> out) {
+//                                 // normalize and split the line
+//                                 String[] tokens = value.split("\\W+|,");
+//                                 int[] freqs = new int[U];
+//                                 for (int i = 0; i < tokens.length; i += jumpstep) {
+//                                     String token = tokens[i];
+//                                     int key = Integer.valueOf(token) - 1;
+//                                     freqs[key] += 1;
+//                                 }
+//                                 for (int i = 0; i < U; i++) {
+//                                     if (freqs[i] != 0) {
+//                                         if (freqs[i] >= 1 / em)
+//                                             out.collect(new Tuple2<Integer, Integer>(i + 1, freqs[i]));
+//                                         else if (random.nextDouble() <= em * freqs[i])
+//                                             out.collect(new Tuple2<Integer, Integer>(i + 1, 0));
+//                                     }
+//                                 }
+//
+//
+//                             }
 //                         }
-//                     }
-//                 }
-//                )
+//                );
+                .mapPartition(new MapPartitionFunction<String, Tuple2<Integer, Integer>>() {
+                    public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
+                        System.out.println("number of partition: ");
+                        int[] freqs = new int[U];
+                        int tj = 0;
+                        for (String s : values) {
+                            String[] tokens = s.split("\\W+|,");
+                            tj += tokens.length;
+                            for (int i = 0; i < tokens.length; i += jumpstep) {
+                                String token = tokens[i];
+                                int key = Integer.valueOf(token) - 1;
+                                freqs[key] += 1;
+                            }
+                        }
+                        for (int i = 0; i < U; i++) {
+                            if (freqs[i] != 0) {
+                                if (freqs[i] >= 1 / em)
+                                    out.collect(new Tuple2<Integer, Integer>(i + 1, freqs[i]));
+                                else if (random.nextDouble() <= em * freqs[i])
+                                    out.collect(new Tuple2<Integer, Integer>(i + 1, 0));
+                            }
+                        }
+                    }
+                }).setParallelism(4);
+
         DataSet<Tuple2<Integer, Integer>> s2freqs = sample.groupBy(0).reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>() {
             @Override
             public void reduce(Iterable<Tuple2<Integer, Integer>> iterable, Collector<Tuple2<Integer, Integer>> collector) throws Exception {
@@ -107,7 +117,7 @@ public class TweLevelSample {
                 collector.collect(Tuple2.of(key, value));
             }
         });
- //       s2freqs.print();
+        //       s2freqs.print();
         DataSet<IntDouble> coefs = s2freqs.reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, IntDouble>() {
 
             @Override
@@ -185,8 +195,8 @@ public class TweLevelSample {
             }
         });
         try {
-   //         coefs.print();
-        //    String classname=Thread.currentThread().getStackTrace()[1].getClassName();
+            //         coefs.print();
+            //    String classname=Thread.currentThread().getStackTrace()[1].getClassName();
             //coefs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
             coefs.writeAsText(outputFile, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
             env.execute();

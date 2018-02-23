@@ -12,6 +12,7 @@ import org.apache.flink.util.Collector;
 import java.util.Iterator;
 
 public class CalculateSSE2 {
+    //file1 is file directory path, file3 is outputpath
     public static void main(String[] args) throws Exception {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         String file1=args[0];

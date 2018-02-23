@@ -14,6 +14,7 @@ import org.apache.flink.util.Collector;
 
 public class CalculateSSE {
     public static void main(String[] args) throws Exception {
+        //file1,file2 are two files for calcualting SSE, file3 is outputpath.
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         String file1=args[0];
         String file2=args[1];
