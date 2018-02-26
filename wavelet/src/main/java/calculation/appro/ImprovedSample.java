@@ -66,7 +66,8 @@ public class ImprovedSample {
                 .mapPartition(new MapPartitionFunction<String, Tuple2<Integer, Integer>>() {
                     public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
                         System.out.println("number of partition: ");
-                        int[] freqs = new int[U];
+                        //   int[] freqs = new int[U];
+                        HashMap<Integer, Integer> freqs = new HashMap<Integer, Integer>();
                         int tj = 0;
                         for (String s : values) {
                             String[] tokens = s.split("\\W+|,");
@@ -75,12 +76,17 @@ public class ImprovedSample {
                             for (int i = 0; i < tokens.length; i += jumpstep) {
                                 String token = tokens[i];
                                 int key = Integer.valueOf(token) - 1;
-                                freqs[key] += 1;
+                                if (freqs.containsKey(key)) {
+                                    freqs.put(key, freqs.get(key) + 1);
+                                }else{
+                                    freqs.put(key,1);
+                                }
+
                             }
                         }
                         for (int i = 0; i < U; i++) {
-                            if (freqs[i] >= ee * tj)
-                                out.collect(new Tuple2<Integer, Integer>(i + 1, freqs[i]));
+                            if (freqs.containsKey(i)&&freqs.get(i) >= ee * tj)
+                                out.collect(new Tuple2<Integer, Integer>(i + 1, freqs.get(i)));
                         }
                     }
                 });
@@ -174,8 +180,8 @@ public class ImprovedSample {
                 histo = null;
 
                 for (int i = 1; i < U; i++)
-                    //        if (detailCoefficients[i] != 0)
-                    pq.add(new IntDouble(i + 1, detailCoefficients[i]));
+                    if (detailCoefficients[i] != 0)
+                        pq.add(new IntDouble(i + 1, detailCoefficients[i]));
                 detailCoefficients = null;
 //											it = detailCoefficients.entrySet().iterator();
 //											while (it.hasNext()) {

@@ -76,7 +76,7 @@ public class TweLevelSample {
                 .mapPartition(new MapPartitionFunction<String, Tuple2<Integer, Integer>>() {
                     public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
                         System.out.println("number of partition: ");
-                        int[] freqs = new int[U];
+                        HashMap<Integer, Integer> freqs = new HashMap<Integer, Integer>();
                         int tj = 0;
                         for (String s : values) {
                             String[] tokens = s.split("\\W+|,");
@@ -84,15 +84,22 @@ public class TweLevelSample {
                             for (int i = 0; i < tokens.length; i += jumpstep) {
                                 String token = tokens[i];
                                 int key = Integer.valueOf(token) - 1;
-                                freqs[key] += 1;
+                                if (freqs.containsKey(key)) {
+                                    freqs.put(key, freqs.get(key) + 1);
+                                } else {
+                                    freqs.put(key, 1);
+                                }
                             }
                         }
                         for (int i = 0; i < U; i++) {
-                            if (freqs[i] != 0) {
-                                if (freqs[i] >= 1 / em)
-                                    out.collect(new Tuple2<Integer, Integer>(i + 1, freqs[i]));
-                                else if (random.nextDouble() <= em * freqs[i])
+                            if (freqs.containsKey(i)) {
+                                int temp = freqs.get(i);
+
+                                if (temp >= 1 / em)
+                                    out.collect(new Tuple2<Integer, Integer>(i + 1, temp));
+                                else if (random.nextDouble() <= em * temp)
                                     out.collect(new Tuple2<Integer, Integer>(i + 1, 0));
+
                             }
                         }
                     }
@@ -175,8 +182,8 @@ public class TweLevelSample {
                 histo = null;
 
                 for (int i = 1; i < U; i++)
-                    // if (detailCoefficients[i] != 0)
-                    pq.add(new IntDouble(i + 1, detailCoefficients[i]));
+                    if (detailCoefficients[i] != 0)
+                        pq.add(new IntDouble(i + 1, detailCoefficients[i]));
                 detailCoefficients = null;
 //											it = detailCoefficients.entrySet().iterator();
 //											while (it.hasNext()) {

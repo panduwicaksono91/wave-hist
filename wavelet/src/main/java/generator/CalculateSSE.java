@@ -54,10 +54,10 @@ public class CalculateSSE {
                     }
                 }
         ).sum(0);
-        sse.print();
+//        sse.print();
         System.out.println("start writing");
-//        sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
-        //      env.execute();
+        sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+        env.execute();
 
 
     }

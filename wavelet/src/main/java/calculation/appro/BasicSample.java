@@ -135,7 +135,7 @@ public class BasicSample {
                         pq.add(new IntDouble(1, histo[0]));
                         histo = null;
 
-                        for (int i = 0; i < U; i++)
+                        for (int i = 1; i < U; i++)
                             if (detailCoefficients[i] != 0)
                                 pq.add(new IntDouble(i + 1, detailCoefficients[i]));
                         detailCoefficients = null;
