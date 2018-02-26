@@ -1,4 +1,4 @@
-package main.java.calculation.exact.improved;
+package main.java.calculation.exact.hwtopk;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
-import main.java.calculation.exact1.IntDouble;
+import main.java.calculation.exact.sendcoef.IntDouble;
 
 public class Phase3Reducer extends RichGroupReduceFunction<Entry, IntDouble> {
 	/**

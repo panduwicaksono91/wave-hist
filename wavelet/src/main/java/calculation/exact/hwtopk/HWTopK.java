@@ -1,9 +1,9 @@
-package main.java.calculation.exact.improved;
+package main.java.calculation.exact.hwtopk;
 
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 
-import main.java.calculation.exact1.IntDouble;
+import main.java.calculation.exact.sendcoef.IntDouble;
 
 
 public class HWTopK {
