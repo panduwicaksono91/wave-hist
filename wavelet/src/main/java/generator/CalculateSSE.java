@@ -19,8 +19,8 @@ public class CalculateSSE {
         String file1=args[0];
         String file2=args[1];
         String file3=args[2];
-//        String file1="wave-hist\\wavelet\\src\\resource\\toydataset_1_freq.txt";
-//        String file2="wave-hist\\wavelet\\src\\resource\\test.txt";
+//        String file1="wave-hist\\wavelet\\src\\resource\\freqs\\toydataset_1_freq.txt";
+//        String file2="wave-hist\\wavelet\\src\\resource\\freqs\\basicscoeffsfreqs.txt";
         DataSet<String> text = env.readTextFile(file1);
         DataSet<String> text2 = env.readTextFile(file2);
 
@@ -43,20 +43,21 @@ public class CalculateSSE {
                 }
         );
         DataSet<Tuple2<Tuple2<String, Integer>, Tuple2<String, Integer>>> result = t1.join(t2).where(0).equalTo(0);
-        DataSet<Tuple1<Double>> sse = result.flatMap(
-                new FlatMapFunction<Tuple2<Tuple2<String, Integer>, Tuple2<String, Integer>>, Tuple1<Double>>() {
+        DataSet<Tuple1<Integer>> sse = result.flatMap(
+                new FlatMapFunction<Tuple2<Tuple2<String, Integer>, Tuple2<String, Integer>>, Tuple1<Integer>>() {
                     @Override
-                    public void flatMap(Tuple2<Tuple2<String, Integer>, Tuple2<String, Integer>> value, Collector<Tuple1<Double>> out) {
-                        Double res = Math.pow(value.f0.f1 - value.f1.f1, 2);
+                    public void flatMap(Tuple2<Tuple2<String, Integer>, Tuple2<String, Integer>> value, Collector<Tuple1<Integer>> out) {
+                        Integer res = (int)Math.pow(value.f0.f1 - value.f1.f1, 2);
 
 
-                        out.collect(new Tuple1<Double>(res));
+                        out.collect(new Tuple1<Integer>(res));
                     }
                 }
         ).sum(0);
         sse.print();
-        sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
-        env.execute();
+        System.out.println("start writing");
+//        sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+        //      env.execute();
 
 
     }

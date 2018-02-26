@@ -8,7 +8,6 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
-
 import main.java.calculation.exact.sendcoef.IntDouble;
 
 import java.util.HashMap;
@@ -174,9 +173,9 @@ public class ImprovedSample {
                 pq.add(new IntDouble(1, histo[0]));
                 histo = null;
 
-                for (int i = 0; i < U; i++)
-                    if (detailCoefficients[i] != 0)
-                        pq.add(new IntDouble(i + 1, detailCoefficients[i]));
+                for (int i = 1; i < U; i++)
+                    //        if (detailCoefficients[i] != 0)
+                    pq.add(new IntDouble(i + 1, detailCoefficients[i]));
                 detailCoefficients = null;
 //											it = detailCoefficients.entrySet().iterator();
 //											while (it.hasNext()) {
@@ -198,7 +197,7 @@ public class ImprovedSample {
 
         {
             //           coefs.print();
-            String classname = Thread.currentThread().getStackTrace()[1].getClassName();
+//            String classname = Thread.currentThread().getStackTrace()[1].getClassName();
 //            coefs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
             coefs.writeAsText(outputFile, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 

@@ -11,7 +11,9 @@ import org.apache.flink.util.Collector;
 
 //a method that generate frequencies of words, only for future test.
 // the BaselineImpl already implemented the caculation.
+
 public class FrequencyGenerator {
+    //input output
     public static void main(String[] args) {
         String in = String.valueOf(args[0]);
         String out = String.valueOf(args[1]);
@@ -26,7 +28,7 @@ public class FrequencyGenerator {
                     @Override
                     public void flatMap(String value, Collector<Tuple2<Integer, Integer>> out) {
                         // normalize and split the line
-                        String[] tokens = value.split("\\W+|,");
+                        String[] tokens = value.replace("(", "").replace(")", "").split("\\W+|,");
 
                         // emit the pairs
                         for (String token : tokens) {

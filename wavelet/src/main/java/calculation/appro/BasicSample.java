@@ -1,5 +1,6 @@
 package main.java.calculation.appro;
 
+import main.java.calculation.exact.sendcoef.IntDouble;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.DataSet;
@@ -7,8 +8,6 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
-
-import main.java.calculation.exact.sendcoef.IntDouble;
 
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -20,7 +19,7 @@ public class BasicSample {
         //     String inputFile = "wave-hist\\wavelet\\src\\resource\\toydataset_1.txt";
 
 
-     //         int U = (int) Math.pow(2, 3);
+        //         int U = (int) Math.pow(2, 3);
         int U = (int) Math.pow(2, 29);
         //number of Levels of the wavelet tree
         int numLevels = (int) (Math.log(U) / Math.log(2));
@@ -33,10 +32,10 @@ public class BasicSample {
         System.out.println(ee);
         System.out.println(n);
         final double pp = 1 / (ee * ee * n);
-      int jumpstep = (int) Math.round(ee * ee * n);
+        int jumpstep = (int) Math.round(ee * ee * n);
         System.out.println("jump: " + (int) Math.round(ee * ee * n));
         String outputpath = String.valueOf(args[3]);
-   //    int jumpstep = 2;
+        //    int jumpstep = 2;
 //		Random random=new Random();
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         //	ReservoirSamplerWithoutReplacement sampler=new ReservoirSamplerWithoutReplacement<Integer>(10);
@@ -157,7 +156,7 @@ public class BasicSample {
                     }
                 });
         try {
-    //        freqs.print();
+            //        freqs.print();
             String classname = Thread.currentThread().getStackTrace()[1].getClassName();
 //            freqs.writeAsText(classname.substring(classname.lastIndexOf(".")+1)+"Coefficients.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
             freqs.writeAsText(outputpath, FileSystem.WriteMode.OVERWRITE).setParallelism(1);

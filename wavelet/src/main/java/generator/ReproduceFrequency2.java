@@ -40,8 +40,8 @@ public class ReproduceFrequency2 {
 //                    }
 //                }
 //        );
-       int U = (int) Math.pow(2, 29);
-     //       int U = (int) Math.pow(2, 3);
+        int U = (int) Math.pow(2, 29);
+//            int U = (int) Math.pow(2, 3);
         File file = new File(inputFile);
         BufferedReader reader = null;
         //       int numberOfDomain = 0;
@@ -54,17 +54,17 @@ public class ReproduceFrequency2 {
         {
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
-            int line = 1;
+            //    int line = 1;
             while ((tempString = reader.readLine()) != null) {
-        //        System.out.println("line " + line + ": " + tempString);
-                String[] substring = tempString.split("[\\(\\)\\s+,]");
+                //        System.out.println("line " + line + ": " + tempString);
+                String[] substring = tempString.replace("(", "").replace(")", "").split("[\\(\\)\\s+,]");
 //                if (line == 1) {
 //                    numberOfDomain = Integer.valueOf(substring[1]);
 //                    numberOfK = Integer.valueOf(substring[2]);
 //                } else {
-                wavelet.put(Integer.valueOf(substring[1]), Float.valueOf(substring[2]));
+                wavelet.put(Integer.valueOf(substring[0]), Float.valueOf(substring[1]));
 //                }
-                line++;
+                //     line++;
             }
             reader.close();
             System.out.println("finish reading");
