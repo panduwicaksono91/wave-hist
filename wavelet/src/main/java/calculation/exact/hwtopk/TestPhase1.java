@@ -1,73 +1,67 @@
-package main.java.calculation.exact.improved;
+package main.java.calculation.exact.hwtopk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 
-import org.apache.flink.api.common.functions.GroupReduceFunction;
-import org.apache.flink.util.Collector;
-
-public class Phase1Reducer implements GroupReduceFunction<Entry, Row>{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3616111236540300386L;
-	int k;
+public class TestPhase1 {
 	
-	public Phase1Reducer(int k) {
-		this.k = k;
-	}
-	@Override
-	public void reduce(Iterable<Entry> values, Collector<Row> out) throws Exception {
+	public static void main(String[] args) {
+		
+		/*
+		 * Test phase 1 from the example in the slide
+		 */
 		HashMap<Integer, List<Integer>> Fx = new HashMap<Integer, List<Integer>>();
 		HashMap<Integer, Double> R = new HashMap<Integer, Double>();
-		HashMap<Integer, ArrayList<String>> keyMap = new HashMap<Integer, ArrayList<String>>();
+	
 		List<Double> kMost = new ArrayList<Double>();
-		List<String> mappers = new ArrayList<String>();
+		
 		int ind = 0;
-		for (Entry entry : values) {
+		List<List<IntDouble2>> values = new ArrayList<List<IntDouble2>>();
+		List<IntDouble2> ls1 = new ArrayList<IntDouble2>();
+		List<IntDouble2> ls2 = new ArrayList<IntDouble2>();
+		List<IntDouble2> ls3 = new ArrayList<IntDouble2>();
+		ls1.add(new IntDouble2(5, 20.0));
+		ls1.add(new IntDouble2(3, -30.0));
+		
+		ls2.add(new IntDouble2(5, 12.0));
+		ls2.add(new IntDouble2(6, -20.0));
+		
+		ls3.add(new IntDouble2(1, 10.0));
+		ls3.add(new IntDouble2(6, -10.0));
+		values.add(ls1); values.add(ls2); values.add(ls3);
+		
+		
+		for (List<IntDouble2> ls : values) {
 			
-			List<IntDouble2> ls = entry.getLs();
-			String keyOut = entry.getKeyOut();
-			mappers.add(keyOut);
 			for (int i = 0; i < ls.size(); i++) {
 			
 				IntDouble2 id = ls.get(i);
 				int x = id.f0;
 				double sx = id.f1;
 				
-				if (i == 0) {
-					if (sx < 0)
-						kMost.add(0.0);
-					else kMost.add(sx);
-				}
-				if (i == ls.size()-1) {
-					if (sx > 0)
-						kMost.add(0.0);
-					else kMost.add(sx);
-				}
+				if (i == 0)
+					kMost.add(sx);
+				else if (i == ls.size()-1)
+					kMost.add(sx);
 				
 				if (R.containsKey(x)) {
 					R.replace(x, R.get(x)+sx);
 					Fx.get(x).add(ind);
-					keyMap.get(x).add(keyOut);
 				}else {
 					R.put(x, sx);
 					List<Integer> tmp = new ArrayList<Integer>();
 					tmp.add(ind);
 					Fx.put(x, tmp);
-					
-					ArrayList<String> nodes = new ArrayList<String>();
-					nodes.add(keyOut);
-					keyMap.put(x, nodes);
 				}
 			}
 			ind++;
 		}
 		
 		HashMap<Integer, double[]> T = new HashMap<Integer, double[]>();
-				
 		for (Integer key : Fx.keySet()) {
 			List<Integer> value = Fx.get(key);
 			double[] ts = new double[] {R.get(key), R.get(key), 0};
@@ -83,11 +77,9 @@ public class Phase1Reducer implements GroupReduceFunction<Entry, Row>{
 			else if ((ts[0] > 0 && ts[1] > 0))
 				ts[2] = ts[0] > ts[1] ? ts[1] : ts[0];
 				
-			out.collect(new Row(key, R.get(key), ts[0], ts[1], ts[2], keyMap.get(key)));
+			T.put(key, ts);
 		}
 		
-		
+	System.out.println();	
 	}
-
-
 }

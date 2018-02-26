@@ -1,4 +1,4 @@
-package main.java.calculation.exact1;
+package main.java.calculation.exact.sendcoef;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 

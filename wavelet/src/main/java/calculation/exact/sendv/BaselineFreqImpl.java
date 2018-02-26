@@ -1,4 +1,4 @@
-package main.java.calculation.exact.baseline;
+package main.java.calculation.exact.sendv;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 
-import main.java.calculation.exact1.IntDouble;
+import main.java.calculation.exact.sendcoef.IntDouble;
 
 public class BaselineFreqImpl {
 	public static void main(String[] args) {
