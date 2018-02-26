@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 import org.apache.flink.api.common.functions.MapPartitionFunction;
 import org.apache.flink.util.Collector;
 
-public class TopKMapPartition implements MapPartitionFunction<IntDouble, IntDouble>{
+public class TopKMapPartition implements MapPartitionFunction<IntFloat, IntFloat>{
 	
 	/**
 	 * 
@@ -16,11 +16,11 @@ public class TopKMapPartition implements MapPartitionFunction<IntDouble, IntDoub
 		this.k = k;
 	}
 	@Override
-	public void mapPartition(Iterable<IntDouble> arg0, Collector<IntDouble> arg1)
+	public void mapPartition(Iterable<IntFloat> arg0, Collector<IntFloat> arg1)
 			throws Exception {
 		// TODO Auto-generated method stub
-		PriorityQueue<IntDouble> pq = new PriorityQueue<IntDouble>();
-		for (IntDouble t : arg0) {
+		PriorityQueue<IntFloat> pq = new PriorityQueue<IntFloat>();
+		for (IntFloat t : arg0) {
 			pq.add(t);
 			
 		}
