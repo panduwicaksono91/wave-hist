@@ -28,6 +28,7 @@ public class TopKMapPartition implements MapPartitionFunction<IntFloat, IntFloat
 		while (!pq.isEmpty() && count > 0) {
 		
 			arg1.collect(pq.poll());
+			count--;
 		}
 		
 	}
