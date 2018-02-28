@@ -16,7 +16,7 @@ public class ReproduceFrequency {
     //inputfile outputfile
     public static void main(String[] args) throws Exception {
         //example file:(8,3) firstline, (numberOfDomain, numberOfCoefficient)
-       // (3,2.5)  (indexOfCoefficentTree, coefficientValue)
+        // (3,2.5)  (indexOfCoefficentTree, coefficientValue)
         //(1,6.75)
         //(4,5.0)
         //2^29 =
@@ -26,7 +26,7 @@ public class ReproduceFrequency {
         System.out.println(inputFile.substring(inputFile.lastIndexOf("\\")+1,inputFile.lastIndexOf(".")));
 
 //        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",8);
-    //    reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",(int)Math.pow(2,29));
+        //    reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",(int)Math.pow(2,29));
 
     }
 
@@ -42,7 +42,7 @@ public class ReproduceFrequency {
     public static HashMap<Integer,Double> reproduceFrequency(String fileName, String outputFile,int numberOfDomain) {
         File file = new File(fileName);
         BufferedReader reader = null;
- //       int numberOfDomain = 0;
+        //       int numberOfDomain = 0;
         HashMap<Integer, Double> wavelet = new HashMap<Integer, Double>();
         HashMap<Integer,Double> avgs = new HashMap<Integer , Double>();
         HashMap<Integer,Double> freqs = new HashMap<Integer , Double>();
@@ -58,7 +58,7 @@ public class ReproduceFrequency {
 //                    numberOfDomain = Integer.valueOf(substring[1]);
 //                    numberOfK = Integer.valueOf(substring[2]);
 //                } else {
-                    wavelet.put(Integer.valueOf(substring[1]), Double.valueOf(substring[2]));
+                wavelet.put(Integer.valueOf(substring[0]), Double.valueOf(substring[1]));
 //                }
                 line++;
             }
@@ -90,13 +90,13 @@ public class ReproduceFrequency {
                     avgs.remove(j);
                 }
             }
-     //       System.out.println(avgs);
+            //       System.out.println(avgs);
             for(int i=1;i<=numberOfDomain;i++){
                 freqs.put(i,avgs.get(numberOfDomain+i));
             }
-        //    System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
+            //    System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
             java.util.Iterator it = freqs.entrySet().iterator();
-  //          File tree=new File(fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("."))+"FreqTree.txt");
+            //          File tree=new File(fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("."))+"FreqTree.txt");
 
             File tree=new File(outputFile);
 

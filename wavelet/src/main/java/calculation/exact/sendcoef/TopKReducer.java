@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.util.Collector;
 
-public class TopKReducer implements GroupReduceFunction<IntDouble, IntDouble> {
+public class TopKReducer implements GroupReduceFunction<IntFloat, IntFloat> {
 	/**
 	 * 
 	 */
@@ -16,10 +16,10 @@ public class TopKReducer implements GroupReduceFunction<IntDouble, IntDouble> {
 		this.k = k;
 	}
 	@Override
-	public void reduce(Iterable<IntDouble> arg0, Collector<IntDouble> arg1) throws Exception {
+	public void reduce(Iterable<IntFloat> arg0, Collector<IntFloat> arg1) throws Exception {
 		// TODO Auto-generated method stub
-		PriorityQueue<IntDouble> pq = new PriorityQueue<IntDouble>();
-		for (IntDouble t : arg0) {
+		PriorityQueue<IntFloat> pq = new PriorityQueue<IntFloat>();
+		for (IntFloat t : arg0) {
 			pq.add(t);
 		}
 		for (int i = 0; i < k; i++) {

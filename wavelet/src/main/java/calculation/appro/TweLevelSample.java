@@ -1,5 +1,6 @@
 package main.java.calculation.appro;
 
+import main.java.calculation.exact.sendcoef.IntFloat;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.MapPartitionFunction;
@@ -8,7 +9,6 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
-
 import main.java.calculation.exact.sendcoef.IntDouble;
 
 import java.io.File;
@@ -77,7 +77,7 @@ public class TweLevelSample {
                 .mapPartition(new MapPartitionFunction<String, Tuple2<Integer, Integer>>() {
                     public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
                         System.out.println("number of partition: ");
-                        int[] freqs = new int[U];
+                        HashMap<Integer, Integer> freqs = new HashMap<Integer, Integer>();
                         int tj = 0;
                         for (String s : values) {
                             String[] tokens = s.split("\\W+|,");
@@ -85,19 +85,29 @@ public class TweLevelSample {
                             for (int i = 0; i < tokens.length; i += jumpstep) {
                                 String token = tokens[i];
                                 int key = Integer.valueOf(token) - 1;
-                                freqs[key] += 1;
+                                if (freqs.containsKey(key)) {
+                                    freqs.put(key, freqs.get(key) + 1);
+                                } else {
+                                    freqs.put(key, 1);
+                                }
                             }
+
                         }
+                        System.out.println("length: "+tj);
+
                         for (int i = 0; i < U; i++) {
-                            if (freqs[i] != 0) {
-                                if (freqs[i] >= 1 / em)
-                                    out.collect(new Tuple2<Integer, Integer>(i + 1, freqs[i]));
-                                else if (random.nextDouble() <= em * freqs[i])
+                            if (freqs.containsKey(i)) {
+                                int temp = freqs.get(i);
+
+                                if (temp >= 1 / em)
+                                    out.collect(new Tuple2<Integer, Integer>(i + 1, temp));
+                                else if (random.nextDouble() <= em * temp)
                                     out.collect(new Tuple2<Integer, Integer>(i + 1, 0));
+
                             }
                         }
                     }
-                }).setParallelism(4);
+                });
 
         DataSet<Tuple2<Integer, Integer>> s2freqs = sample.groupBy(0).reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>() {
             @Override
@@ -119,14 +129,14 @@ public class TweLevelSample {
             }
         });
         //       s2freqs.print();
-        DataSet<IntDouble> coefs = s2freqs.reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, IntDouble>() {
+        DataSet<IntFloat> coefs = s2freqs.reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, IntFloat>() {
 
             @Override
-            public void reduce(Iterable<Tuple2<Integer, Integer>> arg0, Collector<IntDouble> arg1)
+            public void reduce(Iterable<Tuple2<Integer, Integer>> arg0, Collector<IntFloat> arg1)
                     throws Exception {
 
                 System.out.println("starting calculation");
-                double[] histo = new double[U];
+                float[] histo = new float[U];
                 System.out.println(histo.length);
                 for (Tuple2<Integer, Integer> t : arg0) {
                     histo[t.f0 - 1] = t.f1;
@@ -134,14 +144,14 @@ public class TweLevelSample {
                 System.out.println("finish histo numbers putting");
 
 //											HashMap<Integer, Double> detailCoefficients = new HashMap<Integer, Double>(U);
-                double[] detailCoefficients = new double[U];
-                HashMap<Integer, Double> temp;
+                float[] detailCoefficients = new float[U];
+                HashMap<Integer, Float> temp;
 
-                double detailCo;
-                double avgCo;
+                float detailCo;
+                float avgCo;
                 for (int i = 0; i < numLevels; i++) {
                     System.out.println("layer i = " + i);
-                    temp = new HashMap<Integer, Double>();
+                    temp = new HashMap<Integer, Float>();
                     int baseInd = (int) (U / Math.pow(2, i + 1) + 1);
 
                     for (int j = 0; j < U / (Math.pow(2, i)); j += 2) {
@@ -171,13 +181,14 @@ public class TweLevelSample {
                 System.out.println("done with loading to histo. Starting queue");
 
                 //selecting top k
-                PriorityQueue<IntDouble> pq = new PriorityQueue<IntDouble>(U);
-                pq.add(new IntDouble(1, histo[0]));
+                PriorityQueue<IntFloat> pq = new PriorityQueue<IntFloat>(U);
+                pq.add(new IntFloat(1, histo[0]));
                 histo = null;
 
-                for (int i = 0; i < U; i++)
+                for (int i = 1; i < U; i++) {
                     if (detailCoefficients[i] != 0)
-                        pq.add(new IntDouble(i + 1, detailCoefficients[i]));
+                        pq.add(new IntFloat(i + 1, detailCoefficients[i]));
+                }
                 detailCoefficients = null;
 //											it = detailCoefficients.entrySet().iterator();
 //											while (it.hasNext()) {
@@ -187,9 +198,8 @@ public class TweLevelSample {
 //											}
 
                 for (int i = 0; i < k; i++) {
-                    IntDouble id = pq.poll();
+                    IntFloat id = pq.poll();
                     arg1.collect(id);
-                    System.out.println(id);
                 }
 
 
