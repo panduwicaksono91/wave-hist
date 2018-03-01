@@ -73,7 +73,7 @@ public class ImprovedSample {
                         int tj = 0;
                         for (String s : values) {
                             String[] tokens = s.split("\\W+|,");
-                            tj += tokens.length;
+                           // tj += tokens.length;
 
                             for (int i = 0; i < tokens.length; i += jumpstep) {
                                 String token = tokens[i];
@@ -83,10 +83,10 @@ public class ImprovedSample {
                                 } else {
                                     freqs.put(key, 1);
                                 }
-
+                                tj++;
                             }
                         }
-                        System.out.println("length: "+tj);
+                        //System.out.println("length: "+tj);
                         for (int i = 0; i < U; i++) {
                             if (freqs.containsKey(i) && freqs.get(i) >= ee * tj)
                                 out.collect(new Tuple2<Integer, Integer>(i + 1, freqs.get(i)));

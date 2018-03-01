@@ -78,10 +78,10 @@ public class TweLevelSample {
                     public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
                         System.out.println("number of partition: ");
                         HashMap<Integer, Integer> freqs = new HashMap<Integer, Integer>();
-                        int tj = 0;
+                     //   int tj = 0;
                         for (String s : values) {
                             String[] tokens = s.split("\\W+|,");
-                            tj += tokens.length;
+                           // tj += tokens.length;
                             for (int i = 0; i < tokens.length; i += jumpstep) {
                                 String token = tokens[i];
                                 int key = Integer.valueOf(token) - 1;
@@ -90,10 +90,10 @@ public class TweLevelSample {
                                 } else {
                                     freqs.put(key, 1);
                                 }
+                        //        tj++;
                             }
-
                         }
-                        System.out.println("length: "+tj);
+                     //   System.out.println("length: "+tj);
 
                         for (int i = 0; i < U; i++) {
                             if (freqs.containsKey(i)) {
