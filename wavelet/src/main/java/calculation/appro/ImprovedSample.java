@@ -66,6 +66,7 @@ public class ImprovedSample {
 //                );
                 .mapPartition(new MapPartitionFunction<String, Tuple2<Integer, Integer>>() {
                     public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
+
                         System.out.println("number of partition: ");
                         //   int[] freqs = new int[U];
                         HashMap<Integer, Integer> freqs = new HashMap<Integer, Integer>();
