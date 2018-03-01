@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.core.fs.FileSystem;
@@ -47,10 +48,17 @@ public class BaselineImpl {
 		//desired number of coefficients to keep
 		int k = Integer.valueOf(args[1]);
 		String outputFile=args[2];
-	
+		
+		String mapperOption = args[3];
+		FlatMapFunction<String, IntFloat> mapper = null;
+		
+		if (mapperOption == "1")
+			mapper = new LocalIndexCoefficientsFlatMapper(U, numLevels);
+		else
+			mapper = new LocalCoefMapper_2(U, numLevels);
 		ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 		DataSet<IntFloat> freqs = env.readTextFile(inputFile)
-								  .flatMap(new LocalIndexCoefficientsFlatMapper(U, numLevels))
+								  .flatMap(mapper)
 								  .groupBy(0) //group by index i of the wavelet tree
 								  .sum(1)
 								  .mapPartition(new TopKMapPartition(k))
