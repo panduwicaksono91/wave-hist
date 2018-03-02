@@ -124,7 +124,7 @@ public class TweLevelSample {
                     }
                 }
                 //   divided by pp, to get unbiased estimator
-                value = (int) ((value + (int) Math.round(m / em)) / pp);
+                value = (int) ((value +  m / em) / pp);
                 collector.collect(Tuple2.of(key, value));
             }
         });
