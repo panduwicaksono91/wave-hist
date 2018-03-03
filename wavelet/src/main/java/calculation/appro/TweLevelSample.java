@@ -78,10 +78,8 @@ public class TweLevelSample {
                     public void mapPartition(Iterable<String> values, Collector<Tuple2<Integer, Integer>> out) {
                         System.out.println("number of partition: ");
                         HashMap<Integer, Integer> freqs = new HashMap<Integer, Integer>();
-                     //   int tj = 0;
                         for (String s : values) {
                             String[] tokens = s.split("\\W+|,");
-                           // tj += tokens.length;
                             for (int i = 0; i < tokens.length; i += jumpstep) {
                                 String token = tokens[i];
                                 int key = Integer.valueOf(token) - 1;
@@ -90,10 +88,20 @@ public class TweLevelSample {
                                 } else {
                                     freqs.put(key, 1);
                                 }
-                        //        tj++;
                             }
+//                            for (int i = 0; i < tokens.length; i++) {
+//                                if (random.nextDouble() <= pp) {
+//                                    String token = tokens[i];
+//                                    int key = Integer.valueOf(token) - 1;
+//                                    if (freqs.containsKey(key)) {
+//                                        freqs.put(key, freqs.get(key) + 1);
+//                                    } else {
+//                                        freqs.put(key, 1);
+//                                    }
+//                                }
+//                            }
                         }
-                     //   System.out.println("length: "+tj);
+                        //   System.out.println("length: "+tj);
 
                         for (int i = 0; i < U; i++) {
                             if (freqs.containsKey(i)) {
@@ -124,7 +132,7 @@ public class TweLevelSample {
                     }
                 }
                 //   divided by pp, to get unbiased estimator
-                value = (int) ((value +  m / em) / pp);
+                value = (int) ((value + m / em) / pp);
                 collector.collect(Tuple2.of(key, value));
             }
         });
