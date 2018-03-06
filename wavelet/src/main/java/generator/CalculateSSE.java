@@ -12,18 +12,25 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
+/**
+ * @author Shibo Cheng
+ * with join method, perform better than CalculateSSE2 in experiment
+ */
 public class CalculateSSE {
+    /**
+     * calculate SSE, write to outputfile path
+     *
+     * @param args inputfile1 path, inputfile2 path,outputfile path
+     */
     public static void main(String[] args) throws Exception {
-        //file1,file2 are two files for calcualting SSE, file3 is outputpath.
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        String file1=args[0];
-        String file2=args[1];
-        String file3=args[2];
-//        String file1="wave-hist\\wavelet\\src\\resource\\freqs\\toydataset_1_freq.txt";
-//        String file2="wave-hist\\wavelet\\src\\resource\\freqs\\basicscoeffsfreqs.txt";
+        String file1 = args[0];
+        String file2 = args[1];
+        String file3 = args[2];
+
         DataSet<String> text = env.readTextFile(file1);
         DataSet<String> text2 = env.readTextFile(file2);
-
+        //initialize dataset1
         DataSet<Tuple2<String, Long>> t1 = text.flatMap(
                 new FlatMapFunction<String, Tuple2<String, Long>>() {
                     @Override
@@ -33,6 +40,7 @@ public class CalculateSSE {
                     }
                 }
         );
+        //initialize dataset2
         DataSet<Tuple2<String, Long>> t2 = text2.flatMap(
                 new FlatMapFunction<String, Tuple2<String, Long>>() {
                     @Override
@@ -42,20 +50,17 @@ public class CalculateSSE {
                     }
                 }
         );
+        //join the two dataset with the same key
         DataSet<Tuple2<Tuple2<String, Long>, Tuple2<String, Long>>> result = t1.join(t2).where(0).equalTo(0);
         DataSet<Tuple1<Long>> sse = result.flatMap(
                 new FlatMapFunction<Tuple2<Tuple2<String, Long>, Tuple2<String, Long>>, Tuple1<Long>>() {
                     @Override
                     public void flatMap(Tuple2<Tuple2<String, Long>, Tuple2<String, Long>> value, Collector<Tuple1<Long>> out) {
                         Long res = Math.round(Math.pow(value.f0.f1 - value.f1.f1, 2));
-
-
                         out.collect(new Tuple1<Long>(res));
                     }
                 }
         ).sum(0);
-//        sse.print();
-        System.out.println("start writing");
         sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
         env.execute();
 

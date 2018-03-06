@@ -10,19 +10,22 @@ import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.util.Collector;
 
 import java.util.Iterator;
-
+/**
+ * @author Shibo Cheng
+ * calculate SSE without join method,only by reduce, perform worse than CalculateSSE in experiment
+ * specify input is a directory, and only contains two files that need to be calculated
+ */
 public class CalculateSSE2 {
-    //file1 is file directory path, file3 is outputpath
+    /**
+     * calculate SSE, write to outputfile path
+     *
+     * @param args inputdirectory path, inputfile2 path,outputfile path
+     */
     public static void main(String[] args) throws Exception {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        String file1=args[0];
-        String file3=args[1];
-
-        //      String file1="wave-hist\\wavelet\\src\\resource\\freqs";
-        //      String file2="wave-hist\\wavelet\\src\\resource\\test.txt";
-        DataSet<String> text = env.readTextFile(file1);
-
-
+        String fileFolder=args[0];
+        String outputFile=args[1];
+        DataSet<String> text = env.readTextFile(fileFolder);
         DataSet<Tuple2<Integer, Integer>> t1 = text.flatMap(
                 new FlatMapFunction<String, Tuple2<Integer, Integer>>() {
                     @Override
@@ -32,16 +35,6 @@ public class CalculateSSE2 {
                     }
                 }
         );
-//        DataSet<Tuple2<String, Integer>> t2 = text2.flatMap(
-//                new FlatMapFunction<String, Tuple2<String, Integer>>() {
-//                    @Override
-//                    public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
-//                        String[] tokens = value.replace("(", "").replace(")", "").split("\\W+|,");
-//                        out.collect(new Tuple2<String, Integer>(tokens[0], Integer.valueOf(tokens[1])));
-//                    }
-//                }
-//        );
-        //   DataSet<Tuple2<Tuple2<String, Integer>, Tuple2<String, Integer>>> result = t1.join(t2).where(0).equalTo(0);
         DataSet<Tuple1<Long>> sse = t1.groupBy(0).reduceGroup(new GroupReduceFunction<Tuple2<Integer, Integer>, Tuple1<Long>>() {
             @Override
             public void reduce(Iterable<Tuple2<Integer, Integer>> iterable, Collector<Tuple1<Long>> collector) throws Exception {
@@ -49,24 +42,18 @@ public class CalculateSSE2 {
                 int value=0;
                 int count=0;
                 for (Tuple2<Integer, Integer> t : iterable) {
-                    //          System.out.println("t:0/1 "+ t.f0+" "+t.f1);
                     value+=t.f1*i;
                     i=i*(-1);
                     count++;
-//                    System.out.println("count:"+count+" i:"+i);
-//                    System.out.println("value: "+value);
-
                 }
-
-                //   divided by pp, to get unbiased estimator
                 long partialsse=(int)Math.pow(value,2);
+                //if a key only exists in one file, then ignore it.
                 if(count==2) {
                     collector.collect(Tuple1.of(partialsse));
                 }
             }
         }).sum(0);
-        //  sse.print();
-        sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+        sse.writeAsText(outputFile, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
         env.execute();
 
 
