@@ -1,118 +1,86 @@
 package main.java.generator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-
-
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.util.Collector;
 
 import java.io.BufferedReader;
-
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 
-//rebuild the frequency with coefficients and number of domain.
-//generate a map of frequencies,<indexOfElement,frequency>
+/**
+ * @author Shibo Cheng
+ * rebuild the frequency with coefficients.
+ */
 public class ReproduceFrequency {
-    //inputfile outputfile
+    /**
+     * rebuild the frequency with coefficients., write to outputfile path. For calculating SSE later
+     *
+     * @param args inputfile path, outputfile path
+     */
     public static void main(String[] args) throws Exception {
-        //example file:(8,3) firstline, (numberOfDomain, numberOfCoefficient)
-        // (3,2.5)  (indexOfCoefficentTree, coefficientValue)
-        //(1,6.75)
-        //(4,5.0)
-        //2^29 =
         String inputFile = args[0];
-        String outputFile= args[1];
-        reproduceFrequency(inputFile,outputFile,(int)Math.pow(2,29));
-        System.out.println(inputFile.substring(inputFile.lastIndexOf("\\")+1,inputFile.lastIndexOf(".")));
-
-//        reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",8);
-        //    reproduceFrequency("wave-hist\\wavelet\\src\\resource\\basicscoeffs.txt",(int)Math.pow(2,29));
-
-    }
-
-//    public static double SSE(HashMap<Integer,Integer> trueValue, HashMap<Integer,Double> predictedValue){
-//        int n = trueValue.size();
-//        double a = 0.0;
-//        for (int i = 0; i < n; i++) {
-//            a+=Math.pow(trueValue.get(i)-predictedValue.get(i),2);
-//        }
-//        return Math.sqrt(a/n);
-//    }
-
-    public static HashMap<Integer,Double> reproduceFrequency(String fileName, String outputFile,int numberOfDomain) {
-        File file = new File(fileName);
+        String outputFile = args[1];
+        // domain size is fixed to 2^29
+        int U = (int) Math.pow(2, 29);
+        File file = new File(inputFile);
         BufferedReader reader = null;
-        //       int numberOfDomain = 0;
-        HashMap<Integer, Double> wavelet = new HashMap<Integer, Double>();
-        HashMap<Integer,Double> avgs = new HashMap<Integer , Double>();
-        HashMap<Integer,Double> freqs = new HashMap<Integer , Double>();
+        HashMap<Integer, Float> wavelet = new HashMap<Integer, Float>();
+        float[] avgs = new float[U * 2 + 1];
         int level = 0;
         try {
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
-            int line = 1;
             while ((tempString = reader.readLine()) != null) {
-                System.out.println("line " + line + ": " + tempString);
-                String[] substring = tempString.split("[\\(\\)\\s+,]");
-//                if (line == 1) {
-//                    numberOfDomain = Integer.valueOf(substring[1]);
-//                    numberOfK = Integer.valueOf(substring[2]);
-//                } else {
-                wavelet.put(Integer.valueOf(substring[0]), Double.valueOf(substring[1]));
-//                }
-                line++;
+                String[] substring = tempString.replace("(", "").replace(")", "").split("[\\(\\)\\s+,]");
+                wavelet.put(Integer.valueOf(substring[0]), Float.valueOf(substring[1]));
             }
             reader.close();
             System.out.println("finish reading");
-            level = (int) (Math.log(numberOfDomain) / Math.log(2));
-
+            level = (int) (Math.log(U) / Math.log(2));
+            //avgs start from 1, so set 0 as a dummy value
+            avgs[0] = 0;
+            //based on algorithm, coefficient[1] is an average
             if (wavelet.containsKey(1)) {
-                avgs.put(1, wavelet.get(1));
-                avgs.put(2, wavelet.get(1));
+                avgs[1] = wavelet.get(1);
+                avgs[2] = wavelet.get(1);
+
             } else {
-                avgs.put(1, 0.0);
-                avgs.put(2, 0.0);
+                avgs[1] = 0;
+                avgs[2] = 0;
             }
-
-            double coJ=0;
+            //rebuild avgs based on coef and previous level of avg. the final level avg is frequency
+            float coJ = 0;
             for (int i = 1; i <= level; i++) {
-                System.out.println("level:"+i);
-                for (int j = (int)Math.pow(2,i-1)+1; j <= (int)Math.pow(2,i); j++) {
+                System.out.println("level:" + i);
+                for (int j = (int) Math.pow(2, i - 1) + 1; j <= (int) Math.pow(2, i); j++) {
 
-                    if(wavelet.containsKey(j)){
-                        coJ=wavelet.get(j);
-                    }else{
-                        coJ=0;
+                    if (wavelet.containsKey(j)) {
+                        coJ = wavelet.get(j);
+                    } else {
+                        coJ = 0;
                     }
-
-                    avgs.put(j*2-1,avgs.get(j)-coJ);
-                    avgs.put(j*2,avgs.get(j)+coJ);
-                    avgs.remove(j);
+                    avgs[j * 2 - 1] = avgs[j] - coJ;
+                    avgs[j * 2] = avgs[j] + coJ;
                 }
             }
-            //       System.out.println(avgs);
-            for(int i=1;i<=numberOfDomain;i++){
-                freqs.put(i,avgs.get(numberOfDomain+i));
-            }
-            //    System.out.println("frequencies <indexOfElement,frequency>: "+freqs);
-            java.util.Iterator it = freqs.entrySet().iterator();
-            //          File tree=new File(fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("."))+"FreqTree.txt");
-
-            File tree=new File(outputFile);
-
-            BufferedWriter bufferWriter = new java.io.BufferedWriter(new java.io.FileWriter(tree));
-            while(it.hasNext()) {
-                java.util.HashMap.Entry entry = (java.util.HashMap.Entry) it.next();
-                Integer key = (Integer) entry.getKey();
-                Double value = (Double) entry.getValue();  // 返回与此项对应的值
-                bufferWriter.write("("+key+","+value+")\n");
+            //write frequency file
+            BufferedWriter bufferWriter = new BufferedWriter(new java.io.FileWriter( new File(outputFile)));
+            for (int i = 1; i <= U; i++) {
+                bufferWriter.write(i + "," + Math.round(avgs[U + i]) + "\n");
             }
             bufferWriter.flush();
             bufferWriter.close();
-        } catch (Exception e) {
+        } catch (
+                Exception e)
+
+        {
             e.printStackTrace();
         }
-        return freqs;
     }
 
 }
