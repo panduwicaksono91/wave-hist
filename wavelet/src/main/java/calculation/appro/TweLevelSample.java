@@ -78,8 +78,11 @@ public class TweLevelSample {
                             }
                             //For analysis, calculate number of items that passed the threshold and write to disk.
                             int numberPassThreshold = 0;
+                            int numberSampledItem=0;
+
                             for (int i = 0; i < U; i++) {
                                 if (freqs.containsKey(i)) {
+                                    numberSampledItem++;
                                     int temp = freqs.get(i);
                                     //select item with frequency not smaller than 1/em,
                                     if (temp >= 1 / em) {
@@ -93,7 +96,7 @@ public class TweLevelSample {
                                 }
                             }
                             BufferedWriter bufferWriter = new BufferedWriter(new java.io.FileWriter(new File("/share/flink/tmp/thresholdTwoLevel.txt")));
-                            bufferWriter.write("Sampled data in this partition/threshold/passed the threshold: " + tj + ";" + 1/em+";" + numberPassThreshold);
+                            bufferWriter.write("Sampled data in this partition/no.sampled item/threshold/passed the threshold: " + tj + ";"+numberSampledItem+ ";"  + 1/em+";" + numberPassThreshold);
                             bufferWriter.flush();
                             bufferWriter.close();
                         }

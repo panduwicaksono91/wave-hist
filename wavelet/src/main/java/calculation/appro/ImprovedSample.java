@@ -69,16 +69,26 @@ public class ImprovedSample {
                             }
                         }
                         //For analysis, calculate number of items that passed the threshold and write to disk.
+
+//                        for (int i = 0; i < U; i++) {
+//                            //remove item with frequency smaller than ee*tj
+//                            if (freqs.containsKey(i) && freqs.get(i) >= ee * tj) {
+//                                out.collect(new Tuple2<Integer, Integer>(i + 1, freqs.get(i)));
+//                            }
+//                        }
                         int numberPassThreshold = 0;
+                        int numberSampledItem=0;
                         for (int i = 0; i < U; i++) {
                             //remove item with frequency smaller than ee*tj
-                            if (freqs.containsKey(i) && freqs.get(i) >= ee * tj) {
+                            if (freqs.containsKey(i)) {
+                                numberSampledItem++;
+                                if( freqs.get(i) >= ee * tj){
                                 numberPassThreshold++;
-                                out.collect(new Tuple2<Integer, Integer>(i + 1, freqs.get(i)));
+                                out.collect(new Tuple2<Integer, Integer>(i + 1, freqs.get(i)));}
                             }
                         }
                         BufferedWriter bufferWriter = new BufferedWriter(new java.io.FileWriter(new File("/share/flink/tmp/thresholdImprove.txt")));
-                        bufferWriter.write("Sampled data in this partition/threshold/passed the threshold: " + tj+ ";" + ee*tj+ ";" + numberPassThreshold);
+                        bufferWriter.write("Sampled data in this partition/no.sampled item/threshold/passed the threshold: " + tj+ ";" +numberSampledItem+ ";" + ee*tj+ ";" + numberPassThreshold);
                         bufferWriter.flush();
                         bufferWriter.close();
                     }
