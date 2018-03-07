@@ -15,7 +15,7 @@ import main.java.calculation.exact.sendcoef.IntFloat;
  * Compute wavelet with the SendV algorithm.
  *
  */
-public class BaselineFreqImpl {
+public class SendV {
 	/**
 	 * 
 	 * @param args: 0)inputFile path, 1)numLevels, 2)k: number of coefficient to output, 3)outputFile path
@@ -24,7 +24,7 @@ public class BaselineFreqImpl {
     	
         String inputFile = args[0];
         
-        //number of Levels of the wavelet tree is fixed to 29
+        //number of Levels of the wavelet tree
         int numLevels = Integer.valueOf(args[1]);
         
         // domain size

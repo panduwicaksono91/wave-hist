@@ -5,7 +5,11 @@ import java.util.Map;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
-
+/**
+ * 
+ * @author dieutth
+ * FlatMap to compute local wavelet tree, using HashMap (in flatMap).
+ */
 public class LocalIndexCoefficientsFlatMapper implements FlatMapFunction<String, IntFloat>{
 	
 	private static final long serialVersionUID = -3549184163020471119L;
@@ -20,9 +24,10 @@ public class LocalIndexCoefficientsFlatMapper implements FlatMapFunction<String,
 
 	@Override
 	public void flatMap(String arg0, Collector<IntFloat> arg1) throws Exception {
-		// TODO Auto-generated method stub
+		// histo as a HashMap
 		Map<Integer, Float> histo = new HashMap<Integer, Float>();
 		
+		//compute local frequency
 		for (String s : arg0.split(",")) {
 			int key = Integer.valueOf(s)-1;
 			if (histo.containsKey(key)) {
@@ -71,6 +76,7 @@ public class LocalIndexCoefficientsFlatMapper implements FlatMapFunction<String,
 		for (Integer i : detailCoefficients.keySet())
 			arg1.collect(new IntFloat(i, detailCoefficients.get(i)));
 		
+		//Coef with index 1 is an avg-coef, it is stored in histo with key 0
 		arg1.collect(new IntFloat(1, histo.get(0)));
 	}
 }

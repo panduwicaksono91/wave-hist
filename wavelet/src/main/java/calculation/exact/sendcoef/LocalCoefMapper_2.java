@@ -4,7 +4,11 @@ import java.util.HashMap;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
-
+/**
+ * 
+ * @author dieutth
+ * FlatMap to compute local wavelet tree, using array (in flatMap)
+ */
 public class LocalCoefMapper_2 implements FlatMapFunction<String, IntFloat>{
 	
 	private static final long serialVersionUID = -3549184163020471119L;
@@ -19,23 +23,23 @@ public class LocalCoefMapper_2 implements FlatMapFunction<String, IntFloat>{
 
 	@Override
 	public void flatMap(String arg0, Collector<IntFloat> arg1) throws Exception {
+		//histo as an array, first to store local coef; then to store avg-coef from previous level when 
+		// we need to compute detail coef at current level
 		float[] histo = new float[U];
-        System.out.println("starting calculation");
-        
+       
+		//compute local frequency
 		for (String s : arg0.split(",")) {
 			int key = Integer.valueOf(s)-1;
 			histo[key] += 1;
 		}
 		
-        System.out.println("finish histo numbers putting");
-
         float[] detailCoefficients = new float[U];
         HashMap<Integer, Float> temp;
-
         float detailCo;
         float avgCo;
+        
+        //compute wavelet-tree, bottom up
         for (int i = 0; i < numLevels; i++) {
-            System.out.println("layer i = " + i);
             temp = new HashMap<Integer, Float>();
             int baseInd = (int) (U / Math.pow(2, i + 1) + 1);
 
@@ -56,7 +60,9 @@ public class LocalCoefMapper_2 implements FlatMapFunction<String, IntFloat>{
             temp.clear();
         }
         
+        //Coef with index 1 is an avg-coef, so it is stored in histo[0]
         arg1.collect((new IntFloat(1, histo[0])));
+        //add other detail coef
         for (int i = 1; i < U; i++) {
             if (detailCoefficients[i] != 0)
                 arg1.collect(new IntFloat(i + 1, detailCoefficients[i]));
