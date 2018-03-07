@@ -22,11 +22,12 @@ import main.java.calculation.exact.sendv.ComputeWaveletGroupReduce;
  * Two-Level Sampling class,removed items with small frequency after first round sampling,
  * survive part of those items in second round sampling
  */
-public class TweLevelSample {
+public class TwoLevelSample {
     /**
      * execute twolevel-s, generate a wavelet tree and write to disk.
      *
-     * @param args inputfile path, k: the number of coefficient to output,m: the number of parallelism, ee: ε in the paper parameter for sample size, outputfile path
+     * @param args inputfile path, k: the number of coefficient to output,m: the number of parallelism,
+     *  ee: parameter for sample size (epsilon in the paper)a, outputfile path
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
