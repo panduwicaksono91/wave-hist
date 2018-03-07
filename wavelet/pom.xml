@@ -5,6 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>wavelet</name>
   <description>bdapro-building wavelet</description>
+  <packaging>jar</packaging>
   <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -18,6 +19,11 @@
         </dependency>
       
   </dependencies>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
