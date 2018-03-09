@@ -33,7 +33,10 @@ A dataset contains a list of file, each file contains a list of integers, comma 
 ***Note:*** A toy dataset with domain U=8 can be found at: *wavelet/src/main/resource/toydataset.txt*
 ## 2. Build jar file with maven
 Navigate to wavelet source code, and execute:
-> mvn clean package
+> mvn clean package //not skipping test
+
+or 
+> mvn clean package -DskipTests //skipping test
 
 The jar file **wavelet-0.0.1-SNAPSHOT.jar** will be created in folder ./target
 
