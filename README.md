@@ -15,12 +15,15 @@ Your sources, java doc, etc.
 * Dieu Tran (dieutth)
 * Pandu Wicaksono (panduwicaksono91)
 * Shibo Cheng (XXX)
-####### Team Adviser:
+##### Team Advisor:
 * Alireza
 
-change something
-
-[link](test.txt)
+Deliverables:
+* Mid-term presentation
+* Source code
+* Final presentation
+* Report
+* [link](test.txt)
 
 
 # Run the Experiment
@@ -34,21 +37,47 @@ Navigate to wavelet source code, and execute:
 
 The jar file **wavelet-0.0.1-SNAPSHOT.jar** will be created in folder ./target
 
-## 3. Run jar as a Flink job
+## 3. Submit jar to Flink and run as a Flink job
  **wavelet-0.0.1-SNAPSHOT.jar** can be submitted to Flink to run.
- There are 5 algorithms implemented. The following describe parameters that could be used to run the program smoothly.
- 1. SendV
+ Each algorithm is executed with a specific setting. 
+The following provides a summary of parameters, following by the setting needed to run each algorithm.
+ 
+ | Parameter | Meaning |
+|--|--|
+| /path/to/input/file | Absolute path of input file (described in section dataset) |
+|numLevels|Number of levels in the wavelet tree. The formula is: numLevels = log(U)/log(2) where U is domain size| 
+|k|Number of top coefficients to be kept|
+|mapperOption|Possible value: 1 or 2. 1 to use the Mapper1 which use array, 2 to use Mapper2 which use map, to compute wavelet tree. Mapper1 tends to perform more stable, but could lead to OOM if there is not enough resource|
+|epsilon|Parameter for approximate algorithms that affect sample probability (see report for detail)|
+|numParalellism|Number of mappers. This should be equal to parallelism set up when submitting job to Flink.|
+|/path/to/output/file|Absolute path to output file for sinking|
+
+ 1. **SendV**
+ 
 **Entry Class:** main.java.calculation.exact.sendv.SendV
+
 **Program Arguments:** /path/to/input/file numLevels k /path/to/output/file
-2. SendCoef
+
+2. **SendCoef**
+
 **Entry Class:** main.java.calculation.exact.sendcoef
+
 **Program Arguments:** /path/to/input/file numLevels k mapperOption /path/to/output/file
-3.  BasicS
+
+3.  **BasicS**
+
 **Entry Class:** main.java.calculation.appro.BasicSample
-**Program Arguments:** /path/to/input/file numLevels k epsilon /path/to/output/file
-4. ImprovedS
+
+**Program Arguments:** /path/to/input/file k epsilon /path/to/output/file
+
+4. **ImprovedS**
+
 **Entry Class:** main.java.calculation.appro.ImprovedSample
-**Program Arguments:** 
-5. TwoLevelS
+
+**Program Arguments:** /path/to/input/file k epsilon /path/to/output/file
+
+5. **TwoLevelS**
+
 **Entry Class:** main.java.calculation.appro.TwoLevelSample
-**Program Arguments:** 
+
+**Program Arguments:** /path/to/input/file k numParallelism epsilon /path/to/output/file
