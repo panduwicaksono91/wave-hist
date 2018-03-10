@@ -17,17 +17,30 @@ import org.apache.flink.util.Collector;
  * with join method, perform better than CalculateSSE2 in experiment
  */
 public class CalculateSSE {
+
+
     /**
      * calculate SSE, write to outputfile path
      *
      * @param args inputfile1 path, inputfile2 path,outputfile path
      */
     public static void main(String[] args) throws Exception {
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         String file1 = args[0];
         String file2 = args[1];
         String file3 = args[2];
+        sse(file1, file2, file3);
 
+    }
+
+    /**
+     * calculate SSE,
+     * @param file1 inputfile1 to be calculated
+     * @param file2 inputfile2 to be calculated
+     * @param file3 sse result
+     * @throws Exception
+     */
+    public static void sse(String file1, String file2, String file3) throws Exception {
+        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         DataSet<String> text = env.readTextFile(file1);
         DataSet<String> text2 = env.readTextFile(file2);
         //initialize dataset1
@@ -63,7 +76,7 @@ public class CalculateSSE {
         ).sum(0);
         sse.writeAsText(file3, FileSystem.WriteMode.OVERWRITE).setParallelism(1);
         env.execute();
-
-
     }
+
+    ;
 }

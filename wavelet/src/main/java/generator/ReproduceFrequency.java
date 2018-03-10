@@ -25,8 +25,27 @@ public class ReproduceFrequency {
     public static void main(String[] args) throws Exception {
         String inputFile = args[0];
         String outputFile = args[1];
-        // domain size is fixed to 2^29
-        int U = (int) Math.pow(2, 29);
+        int numLevels =Integer.valueOf(args[2]);//Number of levels in the wavelet tree.
+        int U = (int) Math.pow(2, numLevels);
+        float freq[]=reproduceFrequency(inputFile,outputFile,numLevels);
+        //write frequency file
+        BufferedWriter bufferWriter = new BufferedWriter(new java.io.FileWriter( new File(outputFile)));
+        for (int i = 1; i <= U; i++) {
+            bufferWriter.write(i + "," + Math.round(freq[U + i]) + "\n");
+        }
+        bufferWriter.flush();
+        bufferWriter.close();
+    }
+
+    /**
+     *
+     * @param inputFile inputfile path
+     * @param outputFile reproduced frequency file path
+     * @param numLevels Number of levels in the wavelet tree.
+     */
+    public static float[] reproduceFrequency(String inputFile,String outputFile,int numLevels ){
+        int U = (int) Math.pow(2, numLevels);
+
         File file = new File(inputFile);
         BufferedReader reader = null;
         HashMap<Integer, Float> wavelet = new HashMap<Integer, Float>();
@@ -68,19 +87,14 @@ public class ReproduceFrequency {
                     avgs[j * 2] = avgs[j] + coJ;
                 }
             }
-            //write frequency file
-            BufferedWriter bufferWriter = new BufferedWriter(new java.io.FileWriter( new File(outputFile)));
-            for (int i = 1; i <= U; i++) {
-                bufferWriter.write(i + "," + Math.round(avgs[U + i]) + "\n");
-            }
-            bufferWriter.flush();
-            bufferWriter.close();
+
         } catch (
                 Exception e)
 
         {
             e.printStackTrace();
         }
+        return avgs;
     }
 
 }
