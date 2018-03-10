@@ -1,7 +1,10 @@
 package test.java;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +20,8 @@ import main.java.calculation.exact.sendcoef.LocalIndexCoefficientsFlatMapper;
 import main.java.calculation.exact.sendcoef.TopKMapPartition;
 import main.java.calculation.exact.sendcoef.TopKReducer;
 import main.java.calculation.exact.sendv.ComputeWaveletGroupReduce;
+import main.java.generator.CalculateSSE;
+import main.java.generator.ReproduceFrequency;
 /**
  * 
  * @author dieutth
@@ -109,6 +114,52 @@ public class TestWavelet{
 		
 		if (!actualResult.containsAll(expectedResult))
 			fail("Top k coefficients contains some elements it shouldn't contain.");
+	}
+	
+	
+	/**
+	 * Test compute SSE from 2 list of freqs
+	 * @throws Exception
+	 */
+	@Test
+	public void testComputeSSE() throws Exception {
+		String filepath1 = "./src/test/resource/freqs1.txt";
+		String filepath2 = "./src/test/resource/freqs2.txt";
+		String output = "./src/test/resource/output.txt";
+		
+		Long expectedResult = 65l;
+		CalculateSSE.sse(filepath1, filepath2, output);
+		
+		BufferedReader reader = new BufferedReader(new FileReader(output));
+		String line = reader.readLine();
+		Long actualResult = Long.valueOf(line.substring(1, line.length()-1));
+		
+		assertEquals(expectedResult, actualResult);
+		reader.close();
+	}
+	
+	/**
+	 * Test frequency reconstruction.
+	 */
+	@Test
+	public void testReproduceFrequency() {
+		String inputFile = "./src/test/resource/topK.txt";
+		String outputFile = "./src/test/resource/reproducedFreq.txt";
+		int numLevels = 3;
+
+		float[] actualResult = ReproduceFrequency.reproduceFrequency(inputFile, outputFile, numLevels);
+		int[] expectedResult = new int[] {3, 5, 10, 8, 2, 2, 10, 14};
+		int U = 8;
+		
+		for (int i = 0; i < expectedResult.length; i++){
+			try {
+				assertEquals(expectedResult[i],  Math.round(actualResult[U + i+1]));
+			}
+			catch (Exception e) {
+				fail("There is exception!!!");
+			}
+		}
+		
 	}
 	
 }
