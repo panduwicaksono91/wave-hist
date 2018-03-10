@@ -1,38 +1,29 @@
-Your topic title
-Your group id
-Your names and Github user names
-Your mentor(s) name(s) and Github user names
-A summary of your task (may be copied from the report)
-Links to all your deliverables (please use relative paths):
-Midterm presentation
-Final presentation
-Your report
-Your sources, java doc, etc.
-
 # Building Histograms on Large Datasets in Apache Flink
 ## Big Data Project - Issue 12
 ##### Team Member:
-* Dieu Tran (dieutth)
+* Dieu Tran Thi Hong (dieutth)
 * Pandu Wicaksono (panduwicaksono91)
-* Shibo Cheng (XXX)
+* Shibo Cheng (ShiboC)
 ##### Team Advisor:
-* Alireza
+Alireza Rezaei Mahdiraji  (alirezarm)
 
-Deliverables:
-* Mid-term presentation
-* Source code
+## Deliverables:
+* Mid-term presentation 
+* [Source code](./wavelet)
 * Final presentation
 * Report
-* [link](test.txt)
 
 
-# Run the Experiment
-## 1. Dataset Format
+## Run the Experiment
+***Note:*** It is assumed that we are at the wavelet source code folder where we run all the commands in CLI.
+Maven, Flink, and Java need to be installed to run the expriments.
+
+### 1. Dataset Format
 A dataset contains a list of file, each file contains a list of integers, comma separated. Integers are drawn from a domain U.
 
-***Note:*** A toy dataset with domain U=8 can be found at: *wavelet/src/main/resource/toydataset.txt*
-## 2. Build jar file with maven
-Navigate to wavelet source code, and execute:
+A toy dataset with domain U=8 can be found at: *wavelet/src/main/resource/toydataset.txt*
+### 2. Build jar file with maven
+Execute:
 > mvn clean package //not skipping test
 
 or 
@@ -40,10 +31,10 @@ or
 
 The jar file **wavelet-0.0.1-SNAPSHOT.jar** will be created in folder ./target
 
-## 3. Submit jar to Flink and run as a Flink job
+### 3. Submit jar to Flink and run as a Flink job
  **wavelet-0.0.1-SNAPSHOT.jar** can be submitted to Flink to run.
  Each algorithm is executed with a specific setting. 
-The following provides a summary of parameters, following by the setting needed to run each algorithm.
+The table below provides a summary of parameters, following by the setting needed to run each algorithm.
  
  | Parameter | Meaning |
 |--|--|
@@ -55,32 +46,68 @@ The following provides a summary of parameters, following by the setting needed 
 |numParalellism|Number of mappers. This should be equal to parallelism set up when submitting job to Flink.|
 |/path/to/output/file|Absolute path to output file for sinking|
 
- 1. **SendV**
+#### 3.1. **SendV**
  
 **Entry Class:** main.java.calculation.exact.sendv.SendV
 
 **Program Arguments:** /path/to/input/file numLevels k /path/to/output/file
 
-2. **SendCoef**
+In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command:
 
-**Entry Class:** main.java.calculation.exact.sendcoef
+> /share/flink/flink-1.3.2/bin/flink run -p 40 -c main.java.calculation.exact.sendv.SendV ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 29 30 /share/tmp/sendV_result.txt
+
+
+#### 3.2. **SendCoef**
+
+**Entry Class:** main.java.calculation.exact.sendcoef.SendCoef
 
 **Program Arguments:** /path/to/input/file numLevels k mapperOption /path/to/output/file
 
-3.  **BasicS**
+In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, mapperOption = 2, k = 30):
+
+> /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.exact.sendcoef.SendCoef ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 29 30 2 /share/tmp/sendCoef_result.txt
+
+
+#### 3.3.  **BasicS**
 
 **Entry Class:** main.java.calculation.appro.BasicSample
 
 **Program Arguments:** /path/to/input/file k epsilon /path/to/output/file
 
-4. **ImprovedS**
+In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, k = 30, epsilon = 0.0001):
+
+> /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.appro.BasicSample ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 30 0.0001 /share/tmp/basicS_result.txt
+
+
+#### 3.4. **ImprovedS**
 
 **Entry Class:** main.java.calculation.appro.ImprovedSample
 
 **Program Arguments:** /path/to/input/file k epsilon /path/to/output/file
 
-5. **TwoLevelS**
+In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, k = 30, epsilon = 0.0001):
+
+> /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.appro.ImprovedSample ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 30 0.0001 /share/tmp/improvedS_result.txt
+
+#### 3.5. **TwoLevelS**
 
 **Entry Class:** main.java.calculation.appro.TwoLevelSample
 
 **Program Arguments:** /path/to/input/file k numParallelism epsilon /path/to/output/file
+
+In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, k = 30, epsilon = 0.0001):
+
+> /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.appro.ImprovedSample ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 30 40 0.0001 /share/tmp/twoLevelS_result.txt
+
+
+### 4. SSE Calculation
+To compute SSE, execute the following command from wavelet source code folder:
+
+> flink run -c main.java.generator.CalculateSSE ./target/wavelet-0.0.1-SNAPSHOT.jar /path/to/generated/freq/file /path/to/original/freq/file /path/to/output/file
+
+This assumes you can run flink from wavelet source code folder. Otherwise, replace _flink_ with _path/to/your/flink_.
+
+### 5. Frequency Reconstruction
+To generate frequency back from top k coefficients, execute the following command from wavelet source code folder:
+
+> java -cp ./target/wavelet-0.0.1-SNAPSHOT.jar  main.java.generator.ReproduceFrequency /path/to/topKfile /path/to/reconstructed/freqs/file
