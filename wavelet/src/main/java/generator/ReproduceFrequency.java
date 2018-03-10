@@ -25,8 +25,19 @@ public class ReproduceFrequency {
     public static void main(String[] args) throws Exception {
         String inputFile = args[0];
         String outputFile = args[1];
-        // domain size is fixed to 2^29
-        int U = (int) Math.pow(2, 29);
+        int numLevels =Integer.valueOf(args[2]);//Number of levels in the wavelet tree.
+        reproduceFrequency(inputFile,outputFile,numLevels);
+    }
+
+    /**
+     *
+     * @param inputFile inputfile path
+     * @param outputFile reproduced frequency file path
+     * @param numLevels Number of levels in the wavelet tree.
+     */
+    public static void reproduceFrequency(String inputFile,String outputFile,int numLevels ){
+        int U = (int) Math.pow(2, numLevels);
+
         File file = new File(inputFile);
         BufferedReader reader = null;
         HashMap<Integer, Float> wavelet = new HashMap<Integer, Float>();
