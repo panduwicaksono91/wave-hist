@@ -11,23 +11,34 @@ Alireza Rezaei Mahdiraji  (alirezarm)
 * Mid-term presentation 
 * [Source code](./wavelet)
 * Final presentation
-* Report
+* [Report](BDAPRO Report - Issue 12 [FINAL].pdf)
 
 
 ## Run the Experiment
-***Note:*** It is assumed that we are at the wavelet source code folder where we run all the commands in CLI.
-Maven, Flink, and Java need to be installed to run the expriments.
+***Note:***
+* It is assumed that we are at the wavelet source code folder where we run all the commands in CLI.
+In other word, current folder (.) = /path/to/wave-hist/Source/wavelet
+* Maven, Flink, and Java need to be installed to run the expriments.
+* For Window OS, we need to setup the FLINK_CONF_DIR environment variable to be able to run Flink from command line in any directory rather than the folder we install flink.
+Setting up this variable by going to SystemProperties => Enviroment Variables => New.
+
+| Variable Name | Variable Value |
+|--|--|
+|FLINK_CONF_DIR| /path/to/flink/conf/folder. For example: D:/installer/flink-1.3.2/conf|
+
 
 ### 1. Dataset Format
 A dataset contains a list of file, each file contains a list of integers, comma separated. Integers are drawn from a domain U.
 
 A toy dataset with domain U=8 can be found at: *wavelet/src/main/resource/toydataset.txt*
 ### 2. Build jar file with maven
-Execute:
-> mvn clean package //not skipping test
+We can build jar file with or without skipping test.
 
-or 
-> mvn clean package -DskipTests //skipping test
+* To build jar file without skipping test, execute:
+> mvn clean package 
+
+* To build jar file, skipping test, execute:
+> mvn clean package -DskipTests 
 
 The jar file **wavelet-0.0.1-SNAPSHOT.jar** will be created in folder ./target
 
@@ -52,7 +63,7 @@ The table below provides a summary of parameters, following by the setting neede
 
 **Program Arguments:** /path/to/input/file numLevels k /path/to/output/file
 
-In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command:
+In our experiment, for example, we run this job in the cluster with the following command:
 
 > /share/flink/flink-1.3.2/bin/flink run -p 40 -c main.java.calculation.exact.sendv.SendV ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 29 30 /share/tmp/sendV_result.txt
 
@@ -63,7 +74,7 @@ In our experiment, for example, we run this job in the [cluster](ibm-power-1.dim
 
 **Program Arguments:** /path/to/input/file numLevels k mapperOption /path/to/output/file
 
-In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, mapperOption = 2, k = 30):
+In our experiment, for example, we run this job in the cluster with the following command (in this example, mapperOption = 2, k = 30):
 
 > /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.exact.sendcoef.SendCoef ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 29 30 2 /share/tmp/sendCoef_result.txt
 
@@ -74,7 +85,7 @@ In our experiment, for example, we run this job in the [cluster](ibm-power-1.dim
 
 **Program Arguments:** /path/to/input/file k epsilon /path/to/output/file
 
-In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, k = 30, epsilon = 0.0001):
+In our experiment, for example, we run this job in the cluster with the following command (in this example, k = 30, epsilon = 0.0001):
 
 > /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.appro.BasicSample ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 30 0.0001 /share/tmp/basicS_result.txt
 
@@ -85,7 +96,7 @@ In our experiment, for example, we run this job in the [cluster](ibm-power-1.dim
 
 **Program Arguments:** /path/to/input/file k epsilon /path/to/output/file
 
-In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, k = 30, epsilon = 0.0001):
+In our experiment, for example, we run this job in the cluster with the following command (in this example, k = 30, epsilon = 0.0001):
 
 > /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.appro.ImprovedSample ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 30 0.0001 /share/tmp/improvedS_result.txt
 
@@ -95,7 +106,7 @@ In our experiment, for example, we run this job in the [cluster](ibm-power-1.dim
 
 **Program Arguments:** /path/to/input/file k numParallelism epsilon /path/to/output/file
 
-In our experiment, for example, we run this job in the [cluster](ibm-power-1.dima.tu-berlin.de) with the following command (in this example, k = 30, epsilon = 0.0001):
+In our experiment, for example, we run this job in the cluster with the following command (in this example, k = 30, epsilon = 0.0001):
 
 > /share/flink/flink-1.3.2/bin/flink run -p 40 -c  main.java.calculation.appro.ImprovedSample ./target/wavelet-0.0.1-SNAPSHOT.jar /share/tmp/dataset245.txt 30 40 0.0001 /share/tmp/twoLevelS_result.txt
 
@@ -110,4 +121,4 @@ This assumes you can run flink from wavelet source code folder. Otherwise, repla
 ### 5. Frequency Reconstruction
 To generate frequency back from top k coefficients, execute the following command from wavelet source code folder:
 
-> java -cp ./target/wavelet-0.0.1-SNAPSHOT.jar  main.java.generator.ReproduceFrequency /path/to/topKfile /path/to/reconstructed/freqs/file
+> java -cp ./target/wavelet-0.0.1-SNAPSHOT.jar  main.java.generator.ReproduceFrequency /path/to/topKfile /path/to/reconstructed/freqs/file numLevels
