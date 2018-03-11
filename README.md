@@ -17,10 +17,10 @@ References:
 [3] http://ita.ee.lbl.gov/html/contrib/WorldCup.html (Accessed 18 January 2018)
 
 ## Deliverables:
-* Mid-term presentation 
-* [Source code](./wavelet)
-* Final presentation
-* [Report](BDAPRO Report - Issue 12 [FINAL].pdf)
+* [Mid-term presentation](./Presentations/Midterm/BDAPRO%20Midterm%20Presentation%20-%20Wavelet%20Histogram.pdf)
+* [Source code](./Sources/wavelet)
+* [Final presentation](./Presentations/Final/BDAPRO_Final_Presentation_Issue_12.pdf)
+* [Report](issue12/BDAPRO_Report_Issue_12.pdf)
 
 
 ## Run the Experiment
