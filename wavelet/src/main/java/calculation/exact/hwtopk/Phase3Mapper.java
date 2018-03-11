@@ -1,13 +1,20 @@
 package main.java.calculation.exact.hwtopk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 
+/**
+ * 
+ * @author dieutth
+ * Legacy class.
+ * Mapper of Phase 3 of HWTopK, when phase 1 write to file local coefs.
+ * Writing to file is not a correct way to implement HWTopK so
+ * this mapper is not going to be used.
+ */
 public class Phase3Mapper  extends RichMapFunction<String, Entry>{
 
 	/**

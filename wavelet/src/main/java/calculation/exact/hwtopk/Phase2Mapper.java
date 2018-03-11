@@ -7,6 +7,14 @@ import java.util.PriorityQueue;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 
+/**
+ * 
+ * @author dieutth
+ * Legacy class.
+ * Mapper of Phase 2 of HWTopK, when phase 1 write to file local coefs.
+ * Writing to file is not a correct way to implement HWTopK so
+ * this mapper is not going to be used.
+ */
 public class Phase2Mapper extends RichMapFunction<String, Entry>{
 	
 	private static final long serialVersionUID = -3549184163020471119L;
