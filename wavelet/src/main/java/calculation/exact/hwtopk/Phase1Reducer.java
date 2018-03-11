@@ -7,6 +7,11 @@ import java.util.List;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.util.Collector;
 
+/**
+ * 
+ * @author dieutth
+ * Reducer of phase 1 of hwtopk.
+ */
 public class Phase1Reducer implements GroupReduceFunction<Entry, Row>{
 
 	/**
@@ -18,6 +23,14 @@ public class Phase1Reducer implements GroupReduceFunction<Entry, Row>{
 	public Phase1Reducer(int k) {
 		this.k = k;
 	}
+	
+	/**
+	 * Compute table R from top k most negative, positive coefs 
+	 * sent from all nodes.
+	 * See histogram slide for how to compute table R.
+	 * @param values list of entry; each entry contains list of top k most negative, positive coefs, and nodeID (keyOut).
+	 * @param out collect list of computed Row of table R
+	 */
 	@Override
 	public void reduce(Iterable<Entry> values, Collector<Row> out) throws Exception {
 		HashMap<Integer, List<Integer>> Fx = new HashMap<Integer, List<Integer>>();
@@ -26,6 +39,7 @@ public class Phase1Reducer implements GroupReduceFunction<Entry, Row>{
 		List<Double> kMost = new ArrayList<Double>();
 		List<String> mappers = new ArrayList<String>();
 		int ind = 0;
+	
 		for (Entry entry : values) {
 			
 			List<IntDouble2> ls = entry.getLs();

@@ -1,7 +1,11 @@
 package main.java.calculation.exact.hwtopk;
 
 import java.util.List;
-
+/**
+ * 
+ * @author dieutth
+ * Entry class, represents keyOut (ie. nodeID in the paper) and a list of key-coefficient pair in that node.
+ */
 public class Entry {
 	String keyOut;
 	List<IntDouble2> ls;

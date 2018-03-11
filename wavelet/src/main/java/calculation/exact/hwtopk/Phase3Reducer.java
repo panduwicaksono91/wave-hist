@@ -10,6 +10,13 @@ import org.apache.flink.util.Collector;
 
 import main.java.calculation.exact.sendcoef.IntDouble;
 
+/**
+ * 
+ * @author dieutth
+ * Reducer of phase 3 of HWTopK
+ *
+ */
+
 public class Phase3Reducer extends RichGroupReduceFunction<Entry, IntDouble> {
 	/**
 	 * 
@@ -23,6 +30,9 @@ public class Phase3Reducer extends RichGroupReduceFunction<Entry, IntDouble> {
 		map = new HashMap<Integer,Double>();
 	}
 	
+	/**
+	 * Get current table R (see histogram slide for table R) from broadcast variable after phase 2
+	 */
     @Override
     public void open(Configuration parameters) throws Exception {
       super.open(parameters);
@@ -32,6 +42,9 @@ public class Phase3Reducer extends RichGroupReduceFunction<Entry, IntDouble> {
       }
     }
 	  
+    /**
+     * Compute top K coefficients
+     */
 	@Override
 	public void reduce(Iterable<Entry> values, Collector<IntDouble> out) throws Exception {
 		

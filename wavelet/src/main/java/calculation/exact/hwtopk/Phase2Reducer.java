@@ -11,10 +11,14 @@ import org.apache.flink.api.common.functions.RichGroupReduceFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
+/**
+ * 
+ * @author dieutth
+ * Reducer of phase 2 of HWTopK
+ * 
+ */
 public class Phase2Reducer extends RichGroupReduceFunction<Entry, Row> {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -4403117547914700204L;
 	int k;
 	List<Row> rows;
@@ -38,6 +42,11 @@ public class Phase2Reducer extends RichGroupReduceFunction<Entry, Row> {
       bound = pq.poll();
     }
 
+   /**
+    * Update the table R after receiving new coefs sent from mapper (wrapped in Entry).
+    * @param values list of entries from mapper
+    * @param out a collection of Row of the updated table R
+    */
    @Override
 	public void reduce(Iterable<Entry> values, Collector<Row> out) throws Exception {
 	   HashMap<Integer, Row> map = new HashMap<Integer, Row>();

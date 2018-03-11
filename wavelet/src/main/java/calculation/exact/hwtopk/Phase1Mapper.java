@@ -10,6 +10,14 @@ import java.util.PriorityQueue;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.flink.api.common.functions.MapFunction;
 
+/**
+ * 
+ * @author dieutth
+ * Mapper of phase 1 of HWTopK, where all local coefs are written to file.
+ * This shows an attempt of implementing HWTopK, but this mapper is not used in HWTopK
+ * because writing to file brings the challenge of sync (phase 2 starts after phase 1), 
+ * which leads to incorrect final results.
+ */
 public class Phase1Mapper implements MapFunction<String, Entry>{
 	
 	/**
@@ -30,6 +38,10 @@ public class Phase1Mapper implements MapFunction<String, Entry>{
 		result = new ArrayList<IntDouble2>();
 	}
 
+	/**
+	 * Compute all local coefs, and write to file.
+	 * Return an Entry that contains only top K most positive and negative coefs
+	 */
 	@Override
 	public Entry map(String value) throws Exception {
 		String keyOut = DigestUtils.shaHex(value);

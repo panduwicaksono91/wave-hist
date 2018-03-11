@@ -12,7 +12,11 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
 import main.java.calculation.exact.sendcoef.IntDouble;
-
+/**
+ * 
+ * @author dieutth
+ * Implementation of HWTopK algorithm.
+ */
 
 public class HWTopK {
 	public static void main(String[] args) throws Exception {
@@ -31,6 +35,11 @@ public class HWTopK {
 //		int numLevels = (int)(Math.log(U)/Math.log(2));
 //		int k = 5;
 		
+		/**
+		 * Phase 1 - mapper: Compute all local coefs and store result as a dataset of string
+		 * (instead of writing to file). This manages sync: phase 2 starts after phase 1, but 
+		 * the dataset of string is big and we still need to send a significant amount of data.
+		 */
 		DataSet<String> phase1 =
 				env.readTextFile(inputFile)
 				.flatMap(new FlatMapFunction<String, String>() {
@@ -129,6 +138,10 @@ public class HWTopK {
 				})
 				;
 		
+		
+		/**
+		 * Phase 1 - reduce: compute 
+		 */
 		DataSet<Row> bound = phase1.flatMap(new FlatMapFunction<String, Entry>() {
 			private static final long serialVersionUID = 3316854148689534914L;
 
@@ -143,6 +156,8 @@ public class HWTopK {
 					int f2 = Integer.valueOf(tmp[1]);
 					float f3 = Float.valueOf(tmp[2]);
 					int f1 = Integer.valueOf(tmp[0]);
+					
+					//check if this tmp represents a key-coef that belong to top k, either positive or negative.
 					if (f1 < 0 || f1 > 0)
 						result.add(new IntDouble2(f2, (double)f3));
 				}
@@ -152,13 +167,16 @@ public class HWTopK {
 		.reduceGroup(new Phase1Reducer(k))	
 		;
 
+		//Phase 2, recompute table R (see histogram slide for table R)
 		DataSet<Row> phase2 = phase1
 		.map(new Phase2Mapper_2(k))
 		.withBroadcastSet(bound, "bounds")
 		.reduceGroup(new Phase2Reducer(k))
 		.withBroadcastSet(bound, "bounds")
 		;
-
+		
+		
+		//Phase 3: compute final top K
 		DataSet<IntDouble> phase3 = 
 		phase1
 		.map(new Phase3Mapper_2())

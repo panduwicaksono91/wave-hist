@@ -2,6 +2,11 @@ package main.java.calculation.exact.hwtopk;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 
+/**
+ * 
+ * @author dieutth
+ * IntDouble2 override compareTo of Tuple2
+ */
 public class IntDouble2 extends Tuple2<Integer, Double> implements Comparable<IntDouble2>{
 	/**
 	 * 

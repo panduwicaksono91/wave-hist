@@ -2,6 +2,13 @@ package main.java.calculation.exact.hwtopk;
 
 import java.util.List;
 
+/**
+ * 
+ * @author dieutth
+ * Row class represents a row in table R (see histogram slide for table R)
+ * It contains: key (x), partial sum (sx), upperbound (tplus), lowerbound (tminus), a list of node that 
+ * has sent this key to reducer (nodes), and a final bound for each key (t)
+ */
 public class Row {
 	int x;
 	double sx, tplus, tminus, t;
