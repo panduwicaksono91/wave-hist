@@ -11,10 +11,9 @@ Alireza Rezaei Mahdiraji  (alirezarm)
 ## Summary
 Histogram is one of the popular summarization method which represents information about data. One of the common choice for histogram is Haar wavelet histogram [1][2]. The paper [1][2] proposes algorithms to calculate wavelet histogram using exact solutions and approximate solutions. The goal of this project is to implement the proposed histogram algorithms in Flink and reproduce the experiments suggested by [1][2]. The evaluation of the method is conducted using WorldCup dataset [3] as suggested by the paper.
 
+References:
 [1] Jestes, Jeffrey, Ke Yi, and Feifei Li. Building wavelet histograms on large data in MapReduce. Presentation Slides from https://www.cs.utah.edu/~lifeifei/papers/histogramSlides.pdf (Accessed 18 January 2018).
-
 [2] Jestes, Jeffrey, Ke Yi, and Feifei Li. Building wavelet histograms on large data in MapReduce. Proceedings of the VLDB Endowment 5.2 (2011): 109-120.
-
 [3] http://ita.ee.lbl.gov/html/contrib/WorldCup.html (Accessed 18 January 2018)
 
 ## Deliverables:
