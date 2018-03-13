@@ -38,7 +38,7 @@ Setting up this variable by going to SystemProperties => Enviroment Variables =>
 |FLINK_CONF_DIR| /path/to/flink/conf/folder. For example: D:/installer/flink-1.3.2/conf|
 
 ### 0. Data Preprocessing
-- Donwload the WorldCup dataset from ita.ee.lbl.gov/html/contrib/WorldCup.html
+- Donwload the WorldCup dataset from http://ita.ee.lbl.gov/html/contrib/WorldCup.html
 - Unzip all files, store these unzipped files in folder /path/to/unzipped. 
 - To parse all unzipped binary files, navigate to folder Sources/dataprocessing and execute:
 
