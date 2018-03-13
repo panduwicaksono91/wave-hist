@@ -1,5 +1,5 @@
 # Building Histograms on Large Datasets in Apache Flink
-## Big Data Project - Issue 12
+## Big Data Analytics Project - Issue 12
 ##### Team Member:
 * Dieu Tran Thi Hong (dieutth)
 * Pandu Wicaksono (panduwicaksono91)
@@ -7,18 +7,29 @@
 ##### Team Advisor:
 Alireza Rezaei Mahdiraji  (alirezarm)
 
+
+## Summary
+Histogram is one of the popular summarization method which represents information about data. One of the common choice for histogram is Haar wavelet histogram [1][2]. The paper [1][2] proposes algorithms to calculate wavelet histogram using exact solutions and approximate solutions. The goal of this project is to implement the proposed histogram algorithms in Flink and reproduce the experiments suggested by [1][2]. The evaluation of the method is conducted using WorldCup dataset [3] as suggested by the paper.
+
+References:  
+[1] Jestes, Jeffrey, Ke Yi, and Feifei Li. Building wavelet histograms on large data in MapReduce. Presentation Slides from https://www.cs.utah.edu/~lifeifei/papers/histogramSlides.pdf (Accessed 18 January 2018).  
+[2] Jestes, Jeffrey, Ke Yi, and Feifei Li. Building wavelet histograms on large data in MapReduce. Proceedings of the VLDB Endowment 5.2 (2011): 109-120.  
+[3] http://ita.ee.lbl.gov/html/contrib/WorldCup.html (Accessed 18 January 2018)
+
 ## Deliverables:
-* Mid-term presentation 
-* [Source code](./wavelet)
-* Final presentation
-* [Report](BDAPRO Report - Issue 12 [FINAL].pdf)
+* [Mid-term presentation](./Presentations/Midterm/BDAPRO%20Midterm%20Presentation%20-%20Wavelet%20Histogram.pdf)
+* [Source code](./Sources/wavelet)
+* [Data Preprocessing](./datapreprocessing)
+* [Final presentation](./Presentations/Final/BDAPRO_Final_Presentation_Issue_12.pdf)
+* [Report](issue12/BDAPRO_Report_Issue_12.pdf)
+
 
 
 ## Run the Experiment
 ***Note:***
 * It is assumed that we are at the wavelet source code folder where we run all the commands in CLI.
 In other word, current folder (.) = /path/to/wave-hist/Source/wavelet
-* Maven, Flink, and Java need to be installed to run the expriments.
+* Maven, Flink, Java, python need to be installed to run the expriments.
 * For Window OS, we need to setup the FLINK_CONF_DIR environment variable to be able to run Flink from command line in any directory rather than the folder we install flink.
 Setting up this variable by going to SystemProperties => Enviroment Variables => New.
 
@@ -26,11 +37,25 @@ Setting up this variable by going to SystemProperties => Enviroment Variables =>
 |--|--|
 |FLINK_CONF_DIR| /path/to/flink/conf/folder. For example: D:/installer/flink-1.3.2/conf|
 
+### 0. Data Preprocessing
+- Donwload the WorldCup dataset from ita.ee.lbl.gov/html/contrib/WorldCup.html
+- Unzip all files, store these unzipped files in folder /path/to/unzipped. 
+- To parse all unzipped binary files, navigate to folder Sources/dataprocessing and execute:
+
+> javac WCDProcessing.java
+
+> java WCDProcessing /path/to/unzipped /path/to/processed_data/folder
+
+- Then execute the python script to have a final dataset (still in folder Sources/dataprocessing):
+
+> python ./idgenerator.py /path/to/processed_data/folder /path/to/final_dataset/folder
 
 ### 1. Dataset Format
 A dataset contains a list of file, each file contains a list of integers, comma separated. Integers are drawn from a domain U.
 
 A toy dataset with domain U=8 can be found at: *wavelet/src/main/resource/toydataset.txt*
+
+
 ### 2. Build jar file with maven
 We can build jar file with or without skipping test.
 
