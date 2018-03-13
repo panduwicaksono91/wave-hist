@@ -19,7 +19,7 @@ References:
 ## Deliverables:
 * [Mid-term presentation](./Presentations/Midterm/BDAPRO%20Midterm%20Presentation%20-%20Wavelet%20Histogram.pdf)
 * [Source code](./Sources/wavelet)
-* [Data Preprocessing](./datapreprocessing)
+* [Data Preprocessing](./dataprocessing)
 * [Final presentation](./Presentations/Final/BDAPRO_Final_Presentation_Issue_12.pdf)
 * [Report](issue12/BDAPRO_Report_Issue_12.pdf)
 
