@@ -19,15 +19,17 @@ References:
 ## Deliverables:
 * [Mid-term presentation](./Presentations/Midterm/BDAPRO%20Midterm%20Presentation%20-%20Wavelet%20Histogram.pdf)
 * [Source code](./Sources/wavelet)
+* [Data Preprocessing](./datapreprocessing)
 * [Final presentation](./Presentations/Final/BDAPRO_Final_Presentation_Issue_12.pdf)
 * [Report](issue12/BDAPRO_Report_Issue_12.pdf)
+
 
 
 ## Run the Experiment
 ***Note:***
 * It is assumed that we are at the wavelet source code folder where we run all the commands in CLI.
 In other word, current folder (.) = /path/to/wave-hist/Source/wavelet
-* Maven, Flink, and Java need to be installed to run the expriments.
+* Maven, Flink, Java, python need to be installed to run the expriments.
 * For Window OS, we need to setup the FLINK_CONF_DIR environment variable to be able to run Flink from command line in any directory rather than the folder we install flink.
 Setting up this variable by going to SystemProperties => Enviroment Variables => New.
 
@@ -35,11 +37,25 @@ Setting up this variable by going to SystemProperties => Enviroment Variables =>
 |--|--|
 |FLINK_CONF_DIR| /path/to/flink/conf/folder. For example: D:/installer/flink-1.3.2/conf|
 
+### 0. Data Preprocessing
+- Donwload the WorldCup dataset from ita.ee.lbl.gov/html/contrib/WorldCup.html
+- Unzip all files, store these unzipped files in folder /path/to/unzipped. 
+- To parse all unzipped binary files, navigate to folder Sources/dataprocessing and execute:
+
+> javac WCDProcessing.java
+
+> java WCDProcessing /path/to/unzipped /path/to/processed_data/folder
+
+- Then execute the python script to have a final dataset (still in folder Sources/dataprocessing):
+
+> python ./idgenerator.py /path/to/processed_data/folder /path/to/final_dataset/folder
 
 ### 1. Dataset Format
 A dataset contains a list of file, each file contains a list of integers, comma separated. Integers are drawn from a domain U.
 
 A toy dataset with domain U=8 can be found at: *wavelet/src/main/resource/toydataset.txt*
+
+
 ### 2. Build jar file with maven
 We can build jar file with or without skipping test.
 
