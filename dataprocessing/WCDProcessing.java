@@ -28,9 +28,11 @@ public class WCDProcessing {
 		String filepath = null;
 		
 		//folder that contains all binary files from original dataset
-		File folder = new File("D:\\data\\bdapro\\wavelet\\worldcup2");
+//		File folder = new File("D:\\data\\bdapro\\wavelet\\worldcup2");
+		File folder = new File(args[0]);
 		
-		String outFolder = "D:\\data\\bdapro\\wavelet\\processed";
+//		String outFolder = "D:\\data\\bdapro\\wavelet\\processed";
+		String outFolder = args[1];
 		
 		for (final File fileEntry : folder.listFiles()) {
 		        if (!fileEntry.isDirectory()) {

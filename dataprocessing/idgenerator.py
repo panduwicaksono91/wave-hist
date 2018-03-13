@@ -3,34 +3,36 @@ Created on Jan 15, 2018
 
 @author: dieutth
 '''
-global_ids = {}
-id = 1
-mypath = "/home/dhong/unzipped/processed"
-out = "/home/dhong/out"
 
-
+import sys
 from os import listdir
 from os.path import isfile, join
-onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith("txt")]
 
-# print(onlyfiles)
-for file in onlyfiles:
-    infilepath = join(mypath, file)
-    outfilepath = join(out, file)  
+
+def generateID(mypath, out):
+    global_id = 1
+    global_ids = {}
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith("txt")]
+    for file in onlyfiles:
+        infilepath = join(mypath, file)
+        outfilepath = join(out, file)  
+        
+        with open(outfilepath, "w") as g:
+            ids = []
+            with open(infilepath) as f:
+                for line in f:
+                    coid = ','.join(line.split(',')[:2])
+                    if coid not in global_ids:
+                        global_ids[coid] = global_id
+                        global_id += 1
+                        ids.append(str(global_id))   
+                    else:
+                        
+                        ids.append(str(global_ids[coid]))
+            g.write(','.join(ids) + "\n")
+
+if __name__ == '__main__':
+    input_filepath = sys.argv[1]
+    output_filepath = sys.argv[2]
+    generateID(input_filepath, output_filepath)
     
-    with open(outfilepath, "w") as g:
-        ids = []
-        with open(infilepath) as f:
-            for line in f:
-                coid = ','.join(line.split(',')[:2])
-                if coid not in global_ids:
-                    global_ids[coid] = id
-                    id += 1
-                    ids.append(str(id))   
-                else:
-                    
-                    ids.append(str(global_ids[coid]))
-        g.write(','.join(ids) + "\n")
-		#print(file)
-
-print(len(global_ids))
